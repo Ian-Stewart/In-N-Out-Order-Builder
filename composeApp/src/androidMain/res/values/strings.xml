@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">In-N-Out Order Builder</string>
+    <string name="tab_menu">Menu</string>
+    <string name="tab_your_order">Cart</string>
+    <string name="tab_ready">Ready?</string>
 </resources>

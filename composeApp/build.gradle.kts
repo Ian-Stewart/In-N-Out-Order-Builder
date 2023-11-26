@@ -46,6 +46,8 @@ kotlin {
             implementation(compose.material)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+            // For voyager bottom tab navigation
+            implementation(libs.voyager.tab)
         }
     }
 }
