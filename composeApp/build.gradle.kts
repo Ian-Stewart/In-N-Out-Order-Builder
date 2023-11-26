@@ -48,6 +48,8 @@ kotlin {
             implementation(compose.components.resources)
             // For voyager bottom tab navigation
             implementation(libs.voyager.tab)
+            // For transitions on tab nav
+            implementation(libs.voyager.transitions)
         }
     }
 }
