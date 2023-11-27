@@ -50,6 +50,8 @@ kotlin {
             implementation(libs.voyager.tab)
             // For transitions on tab nav
             implementation(libs.voyager.transitions)
+            // For Koin
+            implementation(libs.voyager.koin)
         }
     }
 }

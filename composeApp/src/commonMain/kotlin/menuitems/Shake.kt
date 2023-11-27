@@ -6,7 +6,11 @@ data class Shake(
     val containsStrawberry: Boolean,
     val size: ShakeSize,
     val splitIntoCups: Int = 1
-)
+): CartItem {
+    override fun name(): String {
+        TODO("Not yet implemented")
+    }
+}
 
 enum class ShakeSize(val uiString: String) {
     REGULAR("Regular"),
