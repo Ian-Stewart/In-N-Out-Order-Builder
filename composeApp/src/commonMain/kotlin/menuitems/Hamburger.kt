@@ -22,7 +22,7 @@ data class Hamburger(
     val slices: Int,
     val condiments: List<Condiment>
 ): CartItem {
-    override fun name(): String {
+    override fun itemName(): String {
         TODO("Not yet implemented")
     }
 }

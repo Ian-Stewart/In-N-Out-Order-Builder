@@ -7,7 +7,7 @@ data class Shake(
     val size: ShakeSize,
     val splitIntoCups: Int = 1
 ): CartItem {
-    override fun name(): String {
+    override fun itemName(): String {
         TODO("Not yet implemented")
     }
 }

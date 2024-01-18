@@ -4,7 +4,7 @@ data class SoftDrink(
     val type: SoftDrinkType,
     val size: SoftDrinkSize
 ): CartItem {
-    override fun name(): String {
+    override fun itemName(): String {
         TODO("Not yet implemented")
     }
 }

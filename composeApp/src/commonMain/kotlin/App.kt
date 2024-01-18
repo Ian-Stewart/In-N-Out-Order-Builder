@@ -58,24 +58,3 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
         icon = { Icon(painter = tab.icon!!, contentDescription = tab.title) } // TODO remove double bangs
     )
 }
-
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun oldMain() {
-    var greetingText by remember { mutableStateOf("Hello World!") }
-    var showImage by remember { mutableStateOf(false) }
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = {
-            greetingText = "Compose: ${Greeting().greet()}"
-            showImage = !showImage
-        }) {
-            Text(greetingText)
-        }
-        AnimatedVisibility(showImage) {
-            Image(
-                painterResource("compose-multiplatform.xml"),
-                null
-            )
-        }
-    }
-}

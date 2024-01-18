@@ -1,10 +1,8 @@
 package menuitems
 
 /**
- * @property name - This is the user-readable string, meant for ordering
- * @property uuid - to identify items that may already be in the cart
+ * @property itemName - This is the user-readable string, meant for ordering
  */
 interface CartItem {
-    fun name(): String
-    fun uuid(): String
+    fun itemName(): String
 }

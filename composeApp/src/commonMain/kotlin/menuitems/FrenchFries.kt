@@ -4,7 +4,7 @@ data class FrenchFries(
     val cookedLevels: FryCookedLevels = FryCookedLevels.STANDARD,
     val extras: List<Condiment>,
 ): CartItem {
-    override fun name(): String {
+    override fun itemName(): String {
         TODO("Not yet implemented")
     }
 }
