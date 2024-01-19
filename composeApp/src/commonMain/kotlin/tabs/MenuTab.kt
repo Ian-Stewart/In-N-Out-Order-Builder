@@ -63,7 +63,7 @@ object MenuTab : Tab {
 fun ItemCard(menuItemType: MenuItemType) {
     Box(modifier = Modifier.padding(4.dp)) {
         Card(modifier = Modifier.fillMaxWidth().shadow(2.dp)) {
-            Column() {
+            Column {
                 val image = painterResource(headerImageForType(menuItemType))
                 val category = titleForType(menuItemType)
                 Image(

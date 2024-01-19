@@ -3,6 +3,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Button
@@ -18,6 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.coroutines.FlowPreview
@@ -30,14 +34,15 @@ import tabs.ReadyTab
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
+    val tabHeight = 56.dp
     MaterialTheme {
-        TabNavigator(MenuTab) { navigator ->
+        TabNavigator(MenuTab) {
             Scaffold(
                 content = {
-                    navigator.current.Content()
+                    Column(modifier = Modifier.padding(bottom = tabHeight)) { CurrentTab() }
                 },
                 bottomBar = {
-                    BottomNavigation {
+                    BottomNavigation(modifier = Modifier.height(tabHeight)) {
                         TabNavigationItem(MenuTab)
                         TabNavigationItem(CartTab)
                         TabNavigationItem(ReadyTab)
