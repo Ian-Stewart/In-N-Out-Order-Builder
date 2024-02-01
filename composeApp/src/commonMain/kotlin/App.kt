@@ -27,13 +27,15 @@ import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.coroutines.FlowPreview
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import repo.CartRepository
 import tabs.CartTab
 import tabs.MenuTab
 import tabs.ReadyTab
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
+    // TODO set this up properly
+    val repository = remember { CartRepository() }
     val tabHeight = 56.dp
     MaterialTheme {
         TabNavigator(MenuTab) {

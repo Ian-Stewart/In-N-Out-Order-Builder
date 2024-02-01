@@ -3,7 +3,7 @@ package menuitems
 data class SoftDrink(
     val type: SoftDrinkType,
     val size: SoftDrinkSize
-): CartItem {
+): Item {
     override fun itemName(): String {
         TODO("Not yet implemented")
     }
