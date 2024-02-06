@@ -1,30 +1,34 @@
 [versions]
-compose = "1.5.4"
+compose = "1.6.0"
 compose-plugin = "1.5.10"
 compose-compiler = "1.5.4"
-agp = "8.2.1"
+agp = "8.2.2"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
-androidx-activityCompose = "1.8.1"
+androidx-activityCompose = "1.8.2"
 androidx-core-ktx = "1.12.0"
 androidx-appcompat = "1.6.1"
-androidx-material = "1.10.0"
+androidx-material = "1.11.0"
 androidx-constraintlayout = "2.1.4"
 androidx-test-junit = "1.1.5"
 androidx-espresso-core = "3.5.1"
 kotlin = "1.9.20"
-junit = "4.13.2"
+
+# AFAIK UI Tests only work in 4
+junit4 = "4.13.2"
+junit5 = "5.8.1"
 
 # For Navigation
 voyager = "1.0.0-rc10"
-uiToolingPreviewDesktop = "1.6.0-rc01"
-uiToolingPreviewAndroid = "1.5.4"
+uiToolingPreviewDesktop = "1.6.0"
+uiToolingPreviewAndroid = "1.6.0"
 
 [libraries]
+junit4 = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit4" }
+junit5 = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit5" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }

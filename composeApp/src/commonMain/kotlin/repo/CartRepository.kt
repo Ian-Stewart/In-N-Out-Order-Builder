@@ -7,37 +7,12 @@ import menuitems.Buns
 import menuitems.Condiment
 import menuitems.CondimentLevel
 import menuitems.CondimentType
+import menuitems.Extra
 import menuitems.Hamburger
 import menuitems.Item
 
 class CartRepository {
-    private val tempFakeCart = listOf(
-        CartItem(
-            item = Hamburger(
-                buns = Buns.STANDARD_TOAST,
-                condiments = listOf(
-                    Condiment(
-                        condimentType = CondimentType.LETTUCE,
-                        level = CondimentLevel.STANDARD
-                    ),
-                    Condiment(
-                        condimentType = CondimentType.MUSTARD,
-                        level = CondimentLevel.EXTRA
-                    ),
-                    Condiment(
-                        condimentType = CondimentType.PICKLES,
-                        level = CondimentLevel.DOUBLE
-                    )
-                ),
-                patties = 2,
-                slices = 2,
-                mustardFried = true,
-                extraWellDone = false
-            ),
-            quantity = 1
-        ),
-
-    )
+    private val tempFakeCart = TemporaryFakeCart.cartItems
     private val contents: MutableStateFlow<List<CartItem>> = MutableStateFlow(tempFakeCart)
     val cart: Flow<List<CartItem>>
         get() = contents.asStateFlow()

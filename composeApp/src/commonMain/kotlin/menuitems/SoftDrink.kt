@@ -5,15 +5,15 @@ data class SoftDrink(
     val size: SoftDrinkSize
 ): Item {
     override fun itemName(): String {
-        TODO("Not yet implemented")
+        return "${size.uiString} ${type.uiString}"
     }
 }
 
-enum class SoftDrinkSize(val uiString: String) {
-    SMALL("Small (12oz)"),
-    MEDIUM("Medium (22oz)"),
-    LARGE("Large (32oz)"),
-    EXTRA_LARGE("Extra Large (40oz)")
+enum class SoftDrinkSize(val uiString: String, val description: String) {
+    SMALL("Small", "12 oz"),
+    MEDIUM("Medium", "22 oz"),
+    LARGE("Large", "32 oz"),
+    EXTRA_LARGE("Extra Large", "40 oz")
 }
 
 enum class SoftDrinkType(val uiString: String, val description: String? = null) {

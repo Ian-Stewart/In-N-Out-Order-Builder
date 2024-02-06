@@ -99,13 +99,13 @@ android {
 dependencies {
     implementation(libs.androidx.ui.tooling.preview.desktop)
     implementation(libs.androidx.ui.tooling.preview.android)
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation(libs.junit4)
+    testImplementation(libs.junit5)
 }
 
 compose.desktop {
     application {
         mainClass = "MainKt"
-
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.assuredoutcomes.unofficialinnout"

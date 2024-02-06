@@ -23,14 +23,13 @@ data class Hamburger(
     val condiments: List<Condiment>
 ): Item {
     override fun itemName(): String {
-        if (isPupPatty()) {
-            return "Pup Patty"
-        }
+        val isGrilledCheese = slices > 0 && patties == 0
         val orderList = mutableListOf<String>()
         // Generate the burger type
         if (slices == 0) {
             // Hamburger
             when (patties) {
+                0 -> orderList.add("Toast (I'm pretty sure you can't do this..??)")
                 1 -> orderList.add("Hamburger")
                 2 -> orderList.add("Double Meat")
                 3 -> orderList.add("Triple Meat")
@@ -45,7 +44,11 @@ data class Hamburger(
                     orderList.add("Double-Double")
                 }
             } else {
-                orderList.add("${patties}x${slices}")
+                if (isGrilledCheese) {
+                    orderList.add("Grilled Cheese")
+                } else {
+                    orderList.add("${patties}x${slices}")
+                }
             }
         }
         // Add primary descriptors (these need to go before toppings, as modifying these clears the condiment preferences in the ordering system)
@@ -93,6 +96,8 @@ data class Hamburger(
                 // Standard lettuce/tomato/pickles come on all burgers
                 // so if it's one of these we only want to add it if the level is different
                 shouldAddCondiment = shouldAddCondiment && (condiment.condimentType !in standardCondiments || condiment.level != CondimentLevel.STANDARD)
+                // Grilled cheese comes with no toppings by default
+                shouldAddCondiment = shouldAddCondiment || isGrilledCheese
                 if (shouldAddCondiment) {
                     orderList.add(condiment.toOrderString())
                 }
@@ -107,24 +112,9 @@ data class Hamburger(
     private fun isAnimalStyle(): Boolean {
         if (!mustardFried) {
             return false
+        } else {
+            return isAnimalStyle(condiments)
         }
-        var hasExtraSpread = false
-        var hasGrilledOnions = false
-        var hasPickles = false
-        condiments.forEach { condiment ->
-            hasExtraSpread = hasExtraSpread || (condiment.condimentType == CondimentType.SPREAD && condiment.level == CondimentLevel.EXTRA)
-            hasGrilledOnions = hasGrilledOnions || (condiment.condimentType == CondimentType.GRILLED_ONIONS && condiment.level == CondimentLevel.STANDARD)
-            hasPickles = hasPickles || (condiment.condimentType == CondimentType.GRILLED_ONIONS && condiment.level == CondimentLevel.STANDARD)
-        }
-        return hasExtraSpread && hasGrilledOnions && hasPickles
-    }
-
-
-    /**
-     * A pup patty is an unseasoned patty with nothing on it, no bun
-     */
-    private fun isPupPatty(): Boolean {
-        return buns == Buns.NO_BUNS && patties == 1 && !mustardFried && !extraWellDone && slices == 0 && condiments.isEmpty()
     }
 
     /**
