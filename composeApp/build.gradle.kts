@@ -99,6 +99,7 @@ android {
 dependencies {
     implementation(libs.androidx.ui.tooling.preview.desktop)
     implementation(libs.androidx.ui.tooling.preview.android)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 }
 
 compose.desktop {

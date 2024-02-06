@@ -31,11 +31,13 @@ import repo.CartRepository
 import tabs.CartTab
 import tabs.MenuTab
 import tabs.ReadyTab
+import viewmodel.OrderViewModel
 
 @Composable
 fun App() {
     // TODO set this up properly
     val repository = remember { CartRepository() }
+    val orderViewModel = remember { OrderViewModel(repository) }
     val tabHeight = 56.dp
     MaterialTheme {
         TabNavigator(MenuTab) {
@@ -47,7 +49,7 @@ fun App() {
                     BottomNavigation(modifier = Modifier.height(tabHeight)) {
                         TabNavigationItem(MenuTab)
                         TabNavigationItem(CartTab)
-                        TabNavigationItem(ReadyTab)
+                        TabNavigationItem(ReadyTab(orderViewModel))
                     }
                 }
             )

@@ -23,6 +23,114 @@ data class Hamburger(
     val condiments: List<Condiment>
 ): Item {
     override fun itemName(): String {
-        TODO("Not yet implemented")
+        if (isPupPatty()) {
+            return "Pup Patty"
+        }
+        val orderList = mutableListOf<String>()
+        // Generate the burger type
+        if (slices == 0) {
+            // Hamburger
+            when (patties) {
+                1 -> orderList.add("Hamburger")
+                2 -> orderList.add("Double Meat")
+                3 -> orderList.add("Triple Meat")
+                4 -> orderList.add("Quadruple Meat")
+                else -> orderList.add("${patties}x0")
+            }
+        } else {
+            if (patties == 2 && slices == 2) {
+                if (isFlyingDutchman()) {
+                    orderList.add("Flying Dutchman")
+                } else {
+                    orderList.add("Double-Double")
+                }
+            } else {
+                orderList.add("${patties}x${slices}")
+            }
+        }
+        // Add primary descriptors (these need to go before toppings, as modifying these clears the condiment preferences in the ordering system)
+        if (isAnimalStyle()) {
+            orderList.add("Animal Style")
+        } else if (mustardFried) {
+            // Animal style is mustard fried
+            orderList.add("Mustard Fried")
+        }
+        if (extraWellDone) {
+            orderList.add("Extra Well Done")
+        }
+        // Bun type
+        val bunDescriptor = when (buns) {
+            Buns.NO_BUNS -> if (isFlyingDutchman()) { "" } else { "No Buns" } // (flying dutchman is also "No buns")
+            Buns.LETTUCE_BUNS -> "Protein Style"
+            Buns.UNTOASTED -> "Untoasted Buns"
+            Buns.STANDARD_TOAST -> "" // Default Option
+            Buns.TOASTED -> "Extra Toasted Buns"
+        }
+        if (bunDescriptor.isNotEmpty()) {
+            orderList.add(bunDescriptor)
+        }
+        // Condiments
+        // Mustard Fried defaults with pickles, so if they were removed we want to indicate that verbally
+        if (mustardFried && condiments.firstOrNull { it.condimentType == CondimentType.PICKLES } == null) {
+            orderList.add("No Pickles")
+        }
+        // Indicate if other standard condiments were removed
+        val standardCondiments = setOf(CondimentType.LETTUCE, CondimentType.TOMATO, CondimentType.SPREAD)
+        standardCondiments.forEach { standardCondiment ->
+            if (condiments.firstOrNull { it.condimentType == standardCondiment } == null) {
+                orderList.add("No ${standardCondiment.uiString}")
+            }
+        }
+        condiments.forEach { condiment ->
+            if (!isAnimalStyle() && condiment.condimentType in setOf(CondimentType.SPREAD, CondimentType.GRILLED_ONIONS, CondimentType.PICKLES)) {
+                // We can bypass these, as animal style places restrictions on how much of these condiments you can order
+                // Ex, if there was no pickles or double grilled onions, it wouldn't be animal style
+                // This condition could be inverted by De Morgan's Law to omit the empty branch
+                // but in my opinion this is easier to read, I think?
+            } else {
+                // If it's standard pickles on mustard fried patties, we wanna skip it (that's the default)
+                var shouldAddCondiment: Boolean = condiment.condimentType != CondimentType.PICKLES || condiment.level != CondimentLevel.STANDARD || !mustardFried
+                // Standard lettuce/tomato/pickles come on all burgers
+                // so if it's one of these we only want to add it if the level is different
+                shouldAddCondiment = shouldAddCondiment && (condiment.condimentType !in standardCondiments || condiment.level != CondimentLevel.STANDARD)
+                if (shouldAddCondiment) {
+                    orderList.add(condiment.toOrderString())
+                }
+            }
+        }
+        return orderList.joinToString(", ")
+    }
+
+    /**
+     * Extra spread, grilled onions, pickles, mustard fried patty
+     */
+    private fun isAnimalStyle(): Boolean {
+        if (!mustardFried) {
+            return false
+        }
+        var hasExtraSpread = false
+        var hasGrilledOnions = false
+        var hasPickles = false
+        condiments.forEach { condiment ->
+            hasExtraSpread = hasExtraSpread || (condiment.condimentType == CondimentType.SPREAD && condiment.level == CondimentLevel.EXTRA)
+            hasGrilledOnions = hasGrilledOnions || (condiment.condimentType == CondimentType.GRILLED_ONIONS && condiment.level == CondimentLevel.STANDARD)
+            hasPickles = hasPickles || (condiment.condimentType == CondimentType.GRILLED_ONIONS && condiment.level == CondimentLevel.STANDARD)
+        }
+        return hasExtraSpread && hasGrilledOnions && hasPickles
+    }
+
+
+    /**
+     * A pup patty is an unseasoned patty with nothing on it, no bun
+     */
+    private fun isPupPatty(): Boolean {
+        return buns == Buns.NO_BUNS && patties == 1 && !mustardFried && !extraWellDone && slices == 0 && condiments.isEmpty()
+    }
+
+    /**
+     * Allegedly this *can* be ordered with condiments
+     */
+    private fun isFlyingDutchman(): Boolean {
+        return buns == Buns.NO_BUNS && patties == 2 && slices == 2
     }
 }

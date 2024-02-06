@@ -3,7 +3,11 @@ package menuitems
 data class Condiment(
     val condimentType: CondimentType,
     val level: CondimentLevel
-)
+) {
+    fun toOrderString(): String {
+        return "${level.uiString} ${condimentType.uiString}"
+    }
+}
 
 enum class CondimentLevel(val uiString: String) {
     VERY_LIGHT("Very Light"),
