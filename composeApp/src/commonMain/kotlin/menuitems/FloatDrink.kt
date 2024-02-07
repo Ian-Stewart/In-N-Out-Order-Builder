@@ -1,8 +1,8 @@
 package menuitems
 
-data class Float(
-    val softDrinkType: SoftDrinkType,
-    val shake: Shake
+data class FloatDrink(
+    val softDrinkType: SoftDrinkType = SoftDrinkType.ROOT_BEER,
+    val shake: Shake = Shake()
 ): Item {
 
     /**

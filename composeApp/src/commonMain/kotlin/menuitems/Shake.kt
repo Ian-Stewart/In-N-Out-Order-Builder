@@ -1,10 +1,10 @@
 package menuitems
 
 data class Shake(
-    val containsChocolate: Boolean,
-    val containsVanilla: Boolean,
-    val containsStrawberry: Boolean,
-    val size: ShakeSize,
+    val containsChocolate: Boolean = false,
+    val containsVanilla: Boolean = false,
+    val containsStrawberry: Boolean = false,
+    val size: ShakeSize = ShakeSize.REGULAR,
     val splitIntoCups: Int = 1
 ): Item {
     override fun itemName(): String {

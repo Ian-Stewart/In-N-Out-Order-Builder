@@ -1,8 +1,8 @@
 package menuitems
 
 data class SoftDrink(
-    val type: SoftDrinkType,
-    val size: SoftDrinkSize
+    val type: SoftDrinkType = SoftDrinkType.COKE,
+    val size: SoftDrinkSize = SoftDrinkSize.MEDIUM
 ): Item {
     override fun itemName(): String {
         return "${size.uiString} ${type.uiString}"

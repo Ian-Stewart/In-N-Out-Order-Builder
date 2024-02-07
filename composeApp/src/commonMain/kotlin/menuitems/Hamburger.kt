@@ -15,12 +15,12 @@ package menuitems
  * Protein Style - lettuce buns
  */
 data class Hamburger(
-    val buns: Buns,
-    val patties: Int,
-    val mustardFried: Boolean,
-    val extraWellDone: Boolean,
-    val slices: Int,
-    val condiments: List<Condiment>
+    val buns: Buns = Buns.STANDARD_TOAST,
+    val patties: Int = 1,
+    val mustardFried: Boolean = false,
+    val extraWellDone: Boolean = false,
+    val slices: Int = 0,
+    val condiments: List<Condiment> = listOf()
 ): Item {
     override fun itemName(): String {
         val isGrilledCheese = slices > 0 && patties == 0
@@ -67,7 +67,7 @@ data class Hamburger(
             Buns.LETTUCE_BUNS -> "Protein Style"
             Buns.UNTOASTED -> "Untoasted Buns"
             Buns.STANDARD_TOAST -> "" // Default Option
-            Buns.TOASTED -> "Extra Toasted Buns"
+            Buns.EXTRA_TOASTED -> "Extra Toasted Buns"
         }
         if (bunDescriptor.isNotEmpty()) {
             orderList.add(bunDescriptor)
@@ -110,10 +110,10 @@ data class Hamburger(
      * Extra spread, grilled onions, pickles, mustard fried patty
      */
     private fun isAnimalStyle(): Boolean {
-        if (!mustardFried) {
-            return false
+        return if (!mustardFried) {
+            false
         } else {
-            return isAnimalStyle(condiments)
+            isAnimalStyle(condiments)
         }
     }
 

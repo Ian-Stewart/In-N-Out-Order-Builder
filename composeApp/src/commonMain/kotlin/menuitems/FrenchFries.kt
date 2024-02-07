@@ -2,7 +2,7 @@ package menuitems
 
 data class FrenchFries(
     val cookedLevels: FryCookedLevels = FryCookedLevels.STANDARD,
-    val condiments: List<Condiment>,
+    val condiments: List<Condiment> = listOf(),
 ): Item {
     override fun itemName(): String {
         val itemNameComponents = mutableListOf<String>()

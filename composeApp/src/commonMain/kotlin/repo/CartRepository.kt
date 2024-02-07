@@ -10,43 +10,66 @@ import menuitems.CondimentType
 import menuitems.Extra
 import menuitems.Hamburger
 import menuitems.Item
+import utils.UUIDGenerator
 
 class CartRepository {
-    private val tempFakeCart = TemporaryFakeCart.cartItems
-    private val contents: MutableStateFlow<List<CartItem>> = MutableStateFlow(tempFakeCart)
-    val cart: Flow<List<CartItem>>
+    private val tempFakeCart = TemporaryFakeCart.cart
+    private val contents: MutableStateFlow<Cart> = MutableStateFlow(tempFakeCart)
+    val cart: Flow<Cart>
         get() = contents.asStateFlow()
 
-
-    fun addItemToCart(item: Item) {
-        var added = false
-        contents.value = contents.value.map { ci ->
-            if (ci.item.itemName() == item.itemName()) {
-                added = true
-                ci.copy(quantity = ci.quantity.plus(1))
-            } else {
-                ci
-            }
-        }
-        if (!added) {
-            contents.value = contents.value.plus(CartItem(item, 1))
-        }
+    fun addNewItemToCart(cartItem: CartItem) {
+        contents.value = contents.value.copy(
+            cartItems = contents.value.cartItems.plus(cartItem)
+        )
     }
 
-    fun adjustCartQuanity(item: Item, newQuantity: Int) {
-        contents.value = contents.value.map { ci ->
-            if (ci.item.itemName() == item.itemName()) {
-                ci.copy(quantity = newQuantity)
-            } else {
-                ci
+    fun editExistingCartitem(cartItem: CartItem) {
+        contents.value = contents.value.copy(
+            cartItems = contents.value.cartItems.map { ci ->
+                if (ci.id == cartItem.id) {
+                    ci.copy(
+                        quantity = cartItem.quantity,
+                        item = cartItem.item
+                    )
+                } else {
+                    ci
+                }
             }
-        }
+        )
+    }
+
+    fun setPepperPacketsQuantity(packets: Int) {
+        contents.value = contents.value.copy(
+            pepperPackets = packets
+        )
+    }
+
+    fun setExtraSpreadQuantity(extraSpread: Int) {
+        contents.value = contents.value.copy(
+            extraSpread = extraSpread
+        )
+    }
+
+    fun setPupPattyQuantity(pupPatties: Int) {
+        contents.value = contents.value.copy(
+            pupPatties = pupPatties
+        )
     }
 
     /**
      * Remove a given item from the cart, regardless of quantity
      */
-    fun removeItemFromCart(item: Item) {
-        contents.value = contents.value.filterNot { it.item.itemName() == item.itemName() }
+    fun removeItemFromCart(cartItem: CartItem) {
+        contents.value = contents.value.copy(
+            cartItems = contents.value.cartItems.filterNot { it.id == cartItem.id }
+        )
     }
 }
+
+data class Cart(
+    val cartItems: List<CartItem> = listOf(),
+    val pupPatties: Int = 0,
+    val extraSpread: Int = 0,
+    val pepperPackets: Int = 0
+)

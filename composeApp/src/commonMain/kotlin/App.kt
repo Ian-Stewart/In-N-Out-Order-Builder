@@ -38,6 +38,7 @@ fun App() {
     // TODO set this up properly
     val repository = remember { CartRepository() }
     val orderViewModel = remember { OrderViewModel(repository) }
+    val newEditViewModel = remember { NewEditViewModel(repository) }
     val tabHeight = 56.dp
     MaterialTheme {
         TabNavigator(MenuTab) {

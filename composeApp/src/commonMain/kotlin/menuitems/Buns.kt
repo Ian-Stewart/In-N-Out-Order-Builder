@@ -5,5 +5,5 @@ enum class Buns(val uiString: String) {
     NO_BUNS("No Buns"),
     UNTOASTED("Untoasted Buns"),
     STANDARD_TOAST("Light Toast Buns"),
-    TOASTED("Extra Toasted Buns")
+    EXTRA_TOASTED("Extra Toasted Buns")
 }
