@@ -2,6 +2,7 @@ package tabs
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,7 +36,10 @@ import menuitems.MenuItemType
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-object MenuTab : Tab {
+class MenuTab(
+    private val onNewItem: (type: MenuItemType) -> Unit,
+    private val onEditExtras: () -> Unit
+) : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -49,30 +55,48 @@ object MenuTab : Tab {
             }
         }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             Text(text = "Menu", modifier = Modifier.fillMaxWidth(), style = MaterialTheme.typography.h1, color = MaterialTheme.colors.onSurface)
-            MenuItemType.entries.map { ItemCard(it) }
+            MenuItemType.entries.map { type ->
+                val image = painterResource(headerImageForType(type))
+                val category = titleForType(type)
+                ItemCard(
+                    backgroundImage = image,
+                    title = category,
+                    contentDescription = "Header image for ${type.name}",
+                    onClick = { onNewItem(type) }
+                )
+            }
+            ItemCard(
+                backgroundImage = painterResource(ImagePath.EXTRAS_HEADER.path),
+                title = "Extras",
+                contentDescription = "Header image for extras",
+                onClick = onEditExtras
+            )
         }
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ItemCard(menuItemType: MenuItemType) {
-    Box(modifier = Modifier.padding(4.dp)) {
+fun ItemCard(
+    backgroundImage: Painter,
+    title: String,
+    contentDescription: String,
+    onClick: () -> Unit
+) {
+    Box(modifier = Modifier.padding(4.dp).clickable { onClick() }) {
         Card(modifier = Modifier.fillMaxWidth().shadow(2.dp)) {
             Column {
-                val image = painterResource(headerImageForType(menuItemType))
-                val category = titleForType(menuItemType)
                 Image(
-                    painter = image,
+                    painter = backgroundImage,
                     modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally),
-                    contentDescription = "Header image for ${menuItemType.name}"
+                    contentDescription = contentDescription
                 )
                 Text(
-                    text = category,
+                    text = title,
                     style = MaterialTheme.typography.h2,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth().padding(4.dp)
@@ -89,7 +113,6 @@ private fun headerImageForType(menuItemType: MenuItemType): String {
         MenuItemType.SODY_POP -> ImagePath.DRINK_HEADER.path
         MenuItemType.FLOAT -> ImagePath.FLOAT_HEADER.path
         MenuItemType.FRIES -> ImagePath.FRIES_HEADER.path
-        MenuItemType.EXTRAS -> ImagePath.EXTRAS_HEADER.path
     }
 }
 
@@ -101,6 +124,5 @@ private fun titleForType(menuItemType: MenuItemType): String {
         MenuItemType.SODY_POP -> "Sodas/Drinks"
         MenuItemType.FLOAT -> "Floats"
         MenuItemType.FRIES -> "French Fries"
-        MenuItemType.EXTRAS -> "Extras"
     }
 }

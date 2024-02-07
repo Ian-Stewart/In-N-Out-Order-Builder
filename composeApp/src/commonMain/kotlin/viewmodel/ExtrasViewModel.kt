@@ -13,6 +13,7 @@ import repo.CartRepository
 
 class ExtrasViewModel(
     private val cartRepository: CartRepository,
+    private val onDone: () -> Unit,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
 
@@ -30,13 +31,41 @@ class ExtrasViewModel(
         mutableState.value = ExtrasViewState(
             pupPatties = cart.pupPatties,
             pepperPackets = cart.pepperPackets,
-            extraSpread = cart.extraSpread
+            spreadPackets = cart.extraSpread
         )
+    }
+
+    fun onEvent(event: ExtrasEvent) {
+        when (event) {
+            ExtrasEvent.CloseViewEvent -> onDone()
+            is ExtrasEvent.SetExtraSpreadEvent -> onSetExtraSpreadEvent(event)
+            is ExtrasEvent.SetPepperPacketsEvent -> onSetPepperPacketsEvent(event)
+            is ExtrasEvent.SetPupPattiesEvent -> onSetPupPattiesEvent(event)
+        }
+    }
+
+    private fun onSetExtraSpreadEvent(event: ExtrasEvent.SetExtraSpreadEvent) {
+        cartRepository.setExtraSpreadQuantity(event.extraSpread)
+    }
+
+    private fun onSetPepperPacketsEvent(event: ExtrasEvent.SetPepperPacketsEvent) {
+        cartRepository.setPepperPacketsQuantity(event.pepperPackets)
+    }
+
+    private fun onSetPupPattiesEvent(event: ExtrasEvent.SetPupPattiesEvent) {
+        cartRepository.setPupPattyQuantity(event.pupPatties)
     }
 }
 
 data class ExtrasViewState(
     val pupPatties: Int = 0,
     val pepperPackets: Int = 0,
-    val extraSpread: Int = 0
+    val spreadPackets: Int = 0
 )
+
+sealed class ExtrasEvent {
+    data object CloseViewEvent: ExtrasEvent()
+    data class SetPepperPacketsEvent(val pepperPackets: Int): ExtrasEvent()
+    data class SetExtraSpreadEvent(val extraSpread: Int): ExtrasEvent()
+    data class SetPupPattiesEvent(val pupPatties: Int): ExtrasEvent()
+}

@@ -14,6 +14,7 @@ import menuitems.Hamburger
 import menuitems.MenuItemType
 import menuitems.Shake
 import menuitems.SoftDrink
+import repo.Cart
 import repo.CartItem
 import repo.CartRepository
 
@@ -27,7 +28,7 @@ class NewEditViewModel(
     private val scope = CoroutineScope(Job() + dispatcher)
     private val mutableState = MutableStateFlow(NewEditViewState())
 
-    private var lastCart: List<CartItem> = listOf()
+    private var lastCart: Cart = Cart()
 
     val stateFlow: StateFlow<NewEditViewState>
         get() = mutableState.asStateFlow()
@@ -41,7 +42,7 @@ class NewEditViewModel(
      * We blow up the viewstate since the world has changed under us. We should expect to see
      * a request to open an existing cart item (or make a new one) later, so this is fine.
      */
-    private fun onNewCart(cart: List<CartItem>) {
+    private fun onNewCart(cart: Cart) {
         mutableState.value = NewEditViewState(
             item = null,
             newItem = true
@@ -57,7 +58,7 @@ class NewEditViewModel(
     }
 
     private fun onEditItemEvent(event: NewEditEvent.EditItemEvent) {
-        val item = lastCart.firstOrNull { it.id == event.cartItemUUID }
+        val item = lastCart.cartItems.firstOrNull { it.id == event.cartItemUUID }
         resultToViewState(NewEditEventResult.EditItemEventResult(item))
     }
 

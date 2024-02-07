@@ -31,7 +31,10 @@ import repo.CartRepository
 import tabs.CartTab
 import tabs.MenuTab
 import tabs.ReadyTab
+import viewmodel.ExtrasViewModel
+import viewmodel.NewEditViewModel
 import viewmodel.OrderViewModel
+import views.ExtrasComposable
 
 @Composable
 fun App() {
@@ -39,21 +42,31 @@ fun App() {
     val repository = remember { CartRepository() }
     val orderViewModel = remember { OrderViewModel(repository) }
     val newEditViewModel = remember { NewEditViewModel(repository) }
+    var isEditingExtras by remember { mutableStateOf(false) }
+    val extrasViewModel = remember { ExtrasViewModel(repository, { isEditingExtras = false }) }
     val tabHeight = 56.dp
+    val menuTab = MenuTab(
+        onNewItem = {},
+        onEditExtras = { isEditingExtras = true }
+    )
     MaterialTheme {
-        TabNavigator(MenuTab) {
-            Scaffold(
-                content = {
-                    Column(modifier = Modifier.padding(bottom = tabHeight)) { CurrentTab() }
-                },
-                bottomBar = {
-                    BottomNavigation(modifier = Modifier.height(tabHeight)) {
-                        TabNavigationItem(MenuTab)
-                        TabNavigationItem(CartTab)
-                        TabNavigationItem(ReadyTab(orderViewModel))
+        if (isEditingExtras) {
+            ExtrasComposable(extrasViewModel)
+        } else {
+            TabNavigator(menuTab) {
+                Scaffold(
+                    content = {
+                        Column(modifier = Modifier.padding(bottom = tabHeight)) { CurrentTab() }
+                    },
+                    bottomBar = {
+                        BottomNavigation(modifier = Modifier.height(tabHeight)) {
+                            TabNavigationItem(menuTab)
+                            TabNavigationItem(CartTab)
+                            TabNavigationItem(ReadyTab(orderViewModel))
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

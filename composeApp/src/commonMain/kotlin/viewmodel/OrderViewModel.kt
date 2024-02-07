@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import menuitems.Extra
+import repo.Cart
 import repo.CartItem
 import repo.CartRepository
 
@@ -31,11 +32,20 @@ class OrderViewModel(
         scope.launch { cartRepository.cart.collect { onNewCart(it) } }
     }
 
-    private fun onNewCart(cart: List<CartItem>) {
-        val items = cart.map { item ->
+    private fun onNewCart(cart: Cart) {
+        val items = cart.cartItems.map { item ->
             "${item.quantity} X ${item.item.itemName()}"
+        }.toMutableList()
+        if (cart.extraSpread > 0) {
+            items.add("${cart.extraSpread} X ${Extra.SPREAD_PACKET.itemName()}")
         }
-        mutableState.value = OrderViewState(items)
+        if (cart.pepperPackets > 0) {
+            items.add("${cart.pepperPackets} X ${Extra.PEPPER_PACKET.itemName()}")
+        }
+        if (cart.pupPatties > 0) {
+            items.add("${cart.pupPatties} X ${Extra.PUP_PATTY.itemName()}")
+        }
+        mutableState.value = OrderViewState(orderItems = items)
     }
 }
 
