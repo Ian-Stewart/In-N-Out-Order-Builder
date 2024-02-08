@@ -20,8 +20,22 @@ data class Hamburger(
     val mustardFried: Boolean = false,
     val extraWellDone: Boolean = false,
     val slices: Int = 0,
-    val condiments: List<Condiment> = listOf()
+    val condiments: List<Condiment> = listOf(
+        Condiment(
+            condimentType = CondimentType.LETTUCE,
+            level = CondimentLevel.STANDARD
+        ),
+        Condiment(
+            condimentType = CondimentType.TOMATO,
+            level = CondimentLevel.STANDARD
+        ),
+        Condiment(
+            condimentType = CondimentType.SPREAD,
+            level = CondimentLevel.STANDARD
+        )
+    )
 ): Item {
+    override fun menuItemType(): MenuItemType = MenuItemType.BURGER
     override fun itemName(): String {
         val isGrilledCheese = slices > 0 && patties == 0
         val orderList = mutableListOf<String>()

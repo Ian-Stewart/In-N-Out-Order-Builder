@@ -6,7 +6,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import kotlinx.coroutines.FlowPreview
 import menuitems.Extra
 import viewmodel.ExtrasEvent
 import viewmodel.ExtrasViewModel
@@ -81,7 +80,6 @@ fun ExtraRow(name: String, quantity: Int, onAdjustQuantity: (Int) -> Unit) {
     }
 }
 
-@FlowPreview
 @Composable
 fun ExtrasPreview() {
     ExtrasDetail(
@@ -94,7 +92,6 @@ fun ExtrasPreview() {
     )
 }
 
-@FlowPreview
 @Composable
 fun PreviewRow() {
     ExtraRow(

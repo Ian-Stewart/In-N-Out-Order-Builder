@@ -1,13 +1,9 @@
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -18,40 +14,65 @@ import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.navigator.tab.Tab
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import kotlinx.coroutines.FlowPreview
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import repo.CartRepository
 import tabs.CartTab
 import tabs.MenuTab
 import tabs.ReadyTab
+import viewmodel.CartViewModel
 import viewmodel.ExtrasViewModel
+import viewmodel.MenuViewModel
+import viewmodel.NewEditEvent
 import viewmodel.NewEditViewModel
 import viewmodel.OrderViewModel
 import views.ExtrasComposable
+import views.ItemComposable
 
 @Composable
 fun App() {
-    // TODO set this up properly
+    // TODO set this up properly, just being a little lazy here tbh
     val repository = remember { CartRepository() }
-    val orderViewModel = remember { OrderViewModel(repository) }
-    val newEditViewModel = remember { NewEditViewModel(repository) }
+
     var isEditingExtras by remember { mutableStateOf(false) }
+    var isEditingItem by remember { mutableStateOf(false) }
+
     val extrasViewModel = remember { ExtrasViewModel(repository, { isEditingExtras = false }) }
+    val newEditViewModel = remember { NewEditViewModel(
+        cartRepository = repository,
+        onNewOrEdit = { isEditingItem = true },
+        onDone = { isEditingItem = false }
+    ) }
+    val orderViewModel = remember { OrderViewModel(repository) }
+    val cartViewModel = remember { CartViewModel(
+        cartRepository = repository,
+        onEditExtras = { isEditingExtras = true },
+        onEditItem = { cartItemUUID ->
+            newEditViewModel.onEvent(NewEditEvent.EditItemEvent(cartItemUUID))
+        }
+    ) }
+    val menuViewModel = remember { MenuViewModel(
+        onExtrasClick = { isEditingExtras = true },
+        onNewItemClick = { itemType -> newEditViewModel.onEvent(NewEditEvent.NewItemEvent(itemType)) }
+    ) }
+
     val tabHeight = 56.dp
-    val menuTab = MenuTab(
-        onNewItem = {},
-        onEditExtras = { isEditingExtras = true }
-    )
+    val menuTab = remember {
+        MenuTab(
+            menuViewModel = menuViewModel,
+            onEditExtras = { isEditingExtras = true }
+        )
+    }
+    val cartTab = remember { CartTab(cartViewModel) }
+    val readyTab = remember { ReadyTab(orderViewModel) }
     MaterialTheme {
         if (isEditingExtras) {
             ExtrasComposable(extrasViewModel)
+        } else if (isEditingItem) {
+            ItemComposable(newEditViewModel)
         } else {
             TabNavigator(menuTab) {
                 Scaffold(
@@ -61,8 +82,8 @@ fun App() {
                     bottomBar = {
                         BottomNavigation(modifier = Modifier.height(tabHeight)) {
                             TabNavigationItem(menuTab)
-                            TabNavigationItem(CartTab)
-                            TabNavigationItem(ReadyTab(orderViewModel))
+                            TabNavigationItem(cartTab)
+                            TabNavigationItem(readyTab)
                         }
                     }
                 )

@@ -31,7 +31,7 @@ class ExtrasViewModel(
         mutableState.value = ExtrasViewState(
             pupPatties = cart.pupPatties,
             pepperPackets = cart.pepperPackets,
-            spreadPackets = cart.extraSpread
+            spreadPackets = cart.spreadPackets
         )
     }
 

@@ -7,13 +7,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import menuitems.Extra
 import repo.Cart
-import repo.CartItem
 import repo.CartRepository
 
 class OrderViewModel(
@@ -36,8 +32,8 @@ class OrderViewModel(
         val items = cart.cartItems.map { item ->
             "${item.quantity} X ${item.item.itemName()}"
         }.toMutableList()
-        if (cart.extraSpread > 0) {
-            items.add("${cart.extraSpread} X ${Extra.SPREAD_PACKET.itemName()}")
+        if (cart.spreadPackets > 0) {
+            items.add("${cart.spreadPackets} X ${Extra.SPREAD_PACKET.itemName()}")
         }
         if (cart.pepperPackets > 0) {
             items.add("${cart.pepperPackets} X ${Extra.PEPPER_PACKET.itemName()}")

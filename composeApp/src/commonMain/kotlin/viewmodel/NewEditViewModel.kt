@@ -23,12 +23,15 @@ import repo.CartRepository
  */
 class NewEditViewModel(
     private val cartRepository: CartRepository,
+    private val onNewOrEdit: () -> Unit,
+    private val onDone: () -> Unit,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private val scope = CoroutineScope(Job() + dispatcher)
     private val mutableState = MutableStateFlow(NewEditViewState())
 
     private var lastCart: Cart = Cart()
+    private var currentItem: CartItem? = null
 
     val stateFlow: StateFlow<NewEditViewState>
         get() = mutableState.asStateFlow()
@@ -37,16 +40,7 @@ class NewEditViewModel(
         scope.launch { cartRepository.cart.collect{ onNewCart(it) } }
     }
 
-    /**
-     * We just want to store the last cart we got, in case we get a request to edit it later
-     * We blow up the viewstate since the world has changed under us. We should expect to see
-     * a request to open an existing cart item (or make a new one) later, so this is fine.
-     */
     private fun onNewCart(cart: Cart) {
-        mutableState.value = NewEditViewState(
-            item = null,
-            newItem = true
-        )
         lastCart = cart
     }
 
@@ -54,12 +48,16 @@ class NewEditViewModel(
         when (event) {
             is NewEditEvent.EditItemEvent -> onEditItemEvent(event)
             is NewEditEvent.NewItemEvent -> onNewItemEvent(event)
+            is NewEditEvent.QuantityEvent -> onQuantityEvent(event)
+            is NewEditEvent.DoneEvent -> onDoneEvent()
+            is NewEditEvent.CancelEvent -> onCancelEvent()
         }
     }
 
     private fun onEditItemEvent(event: NewEditEvent.EditItemEvent) {
         val item = lastCart.cartItems.firstOrNull { it.id == event.cartItemUUID }
         resultToViewState(NewEditEventResult.EditItemEventResult(item))
+        onNewOrEdit()
     }
 
     private fun onNewItemEvent(event: NewEditEvent.NewItemEvent) {
@@ -70,7 +68,42 @@ class NewEditViewModel(
             MenuItemType.FLOAT -> CartItem(item = FloatDrink())
             MenuItemType.FRIES -> CartItem(item = FrenchFries())
         }
+        currentItem = newCartItem
         resultToViewState(NewEditEventResult.NewItemEventResult(newCartItem))
+        onNewOrEdit()
+    }
+
+    private fun onQuantityEvent(event: NewEditEvent.QuantityEvent) {
+        val oldItem = currentItem ?: return
+        val editedItem = oldItem.copy(quantity = event.quantity)
+        currentItem = editedItem
+        resultToViewState(NewEditEventResult.EditItemEventResult(editedItem))
+    }
+
+    /**
+     * Save the cart item and close
+     */
+    private fun onDoneEvent() {
+        val item = currentItem ?: run {
+            onDone()
+            return
+        }
+        currentItem = null
+        val state = mutableState.value
+        if (state.newItem) {
+            cartRepository.addNewItemToCart(item)
+        } else {
+            cartRepository.editExistingCartitem(item)
+        }
+        onDone()
+    }
+
+    /**
+     * Closes without saving to the repo
+     */
+    private fun onCancelEvent() {
+        currentItem = null
+        onDone()
     }
 
     private fun resultToViewState(result: NewEditEventResult) {
@@ -107,6 +140,9 @@ data class NewEditViewState(
 sealed class NewEditEvent {
     data class NewItemEvent(val itemType: MenuItemType): NewEditEvent()
     data class EditItemEvent(val cartItemUUID: String): NewEditEvent()
+    data class QuantityEvent(val quantity: Int): NewEditEvent()
+    data object DoneEvent: NewEditEvent()
+    data object CancelEvent: NewEditEvent()
 }
 
 sealed class NewEditEventResult {

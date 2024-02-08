@@ -8,8 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import viewmodel.CartViewModel
+import views.CartComposable
 
-object CartTab : Tab {
+class CartTab(
+    private val cartViewModel: CartViewModel
+) : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -27,7 +31,7 @@ object CartTab : Tab {
 
     @Composable
     override fun Content() {
-        TextField(value = "Cart", onValueChange = {})
+        CartComposable(viewModel = cartViewModel)
     }
 }
 

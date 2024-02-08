@@ -4,22 +4,21 @@ import menuitems.Buns
 import menuitems.Condiment
 import menuitems.CondimentLevel
 import menuitems.CondimentType
-import menuitems.Extra
 import menuitems.FloatDrink
 import menuitems.FrenchFries
 import menuitems.FryCookedLevels
 import menuitems.Hamburger
+import menuitems.MenuItemType
 import menuitems.Shake
 import menuitems.ShakeSize
 import menuitems.SoftDrink
 import menuitems.SoftDrinkSize
 import menuitems.SoftDrinkType
-import utils.UUIDGenerator
 
 class TemporaryFakeCart {
     companion object {
         val cart = Cart(
-            extraSpread = 2,
+            spreadPackets = 2,
             pepperPackets = 5,
             pupPatties = 1,
             cartItems = listOf(

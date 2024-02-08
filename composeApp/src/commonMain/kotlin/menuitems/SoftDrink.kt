@@ -7,6 +7,9 @@ data class SoftDrink(
     override fun itemName(): String {
         return "${size.uiString} ${type.uiString}"
     }
+
+    override fun menuItemType() = MenuItemType.SODY_POP
+
 }
 
 enum class SoftDrinkSize(val uiString: String, val description: String) {

@@ -2,11 +2,12 @@ package menuitems
 
 data class Shake(
     val containsChocolate: Boolean = false,
-    val containsVanilla: Boolean = false,
+    val containsVanilla: Boolean = true,
     val containsStrawberry: Boolean = false,
     val size: ShakeSize = ShakeSize.REGULAR,
     val splitIntoCups: Int = 1
 ): Item {
+    override fun menuItemType() = MenuItemType.SHAKE
     override fun itemName(): String {
         val itemNameNoSplit = "${itemNameNoShakeNoCups()} Shake"
         return if (splitIntoCups > 1) {

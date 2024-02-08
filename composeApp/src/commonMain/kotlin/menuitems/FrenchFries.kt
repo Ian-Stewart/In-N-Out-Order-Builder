@@ -4,6 +4,7 @@ data class FrenchFries(
     val cookedLevels: FryCookedLevels = FryCookedLevels.STANDARD,
     val condiments: List<Condiment> = listOf(),
 ): Item {
+    override fun menuItemType() = MenuItemType.FRIES
     override fun itemName(): String {
         val itemNameComponents = mutableListOf<String>()
         itemNameComponents.add("Fries")

@@ -3,14 +3,6 @@ package repo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import menuitems.Buns
-import menuitems.Condiment
-import menuitems.CondimentLevel
-import menuitems.CondimentType
-import menuitems.Extra
-import menuitems.Hamburger
-import menuitems.Item
-import utils.UUIDGenerator
 
 class CartRepository {
     private val tempFakeCart = TemporaryFakeCart.cart
@@ -47,7 +39,7 @@ class CartRepository {
 
     fun setExtraSpreadQuantity(extraSpread: Int) {
         contents.value = contents.value.copy(
-            extraSpread = extraSpread
+            spreadPackets = extraSpread
         )
     }
 
@@ -70,6 +62,6 @@ class CartRepository {
 data class Cart(
     val cartItems: List<CartItem> = listOf(),
     val pupPatties: Int = 0,
-    val extraSpread: Int = 0,
+    val spreadPackets: Int = 0,
     val pepperPackets: Int = 0
 )

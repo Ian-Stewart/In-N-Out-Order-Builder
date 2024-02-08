@@ -4,7 +4,7 @@ data class FloatDrink(
     val softDrinkType: SoftDrinkType = SoftDrinkType.ROOT_BEER,
     val shake: Shake = Shake()
 ): Item {
-
+    override fun menuItemType() = MenuItemType.FLOAT
     /**
      * Size is carried in the Shake Size parameter
      * As far as I know, you can't split a float into multiple cups (also, this seems obnoxious to do?)

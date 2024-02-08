@@ -35,9 +35,12 @@ import constants.ImagePath
 import menuitems.MenuItemType
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import utils.MenuItemImage.Companion.headerImageForType
+import viewmodel.MenuEvent
+import viewmodel.MenuViewModel
 
 class MenuTab(
-    private val onNewItem: (type: MenuItemType) -> Unit,
+    private val menuViewModel: MenuViewModel,
     private val onEditExtras: () -> Unit
 ) : Tab {
     override val options: TabOptions
@@ -67,7 +70,7 @@ class MenuTab(
                     backgroundImage = image,
                     title = category,
                     contentDescription = "Header image for ${type.name}",
-                    onClick = { onNewItem(type) }
+                    onClick = { menuViewModel.onEvent(MenuEvent.NewItemEvent(type)) }
                 )
             }
             ItemCard(
@@ -103,16 +106,6 @@ fun ItemCard(
                 )
             }
         }
-    }
-}
-
-private fun headerImageForType(menuItemType: MenuItemType): String {
-    return when (menuItemType) {
-        MenuItemType.BURGER -> ImagePath.BURGER_HEADER.path
-        MenuItemType.SHAKE -> ImagePath.SHAKE_HEADER.path
-        MenuItemType.SODY_POP -> ImagePath.DRINK_HEADER.path
-        MenuItemType.FLOAT -> ImagePath.FLOAT_HEADER.path
-        MenuItemType.FRIES -> ImagePath.FRIES_HEADER.path
     }
 }
 
