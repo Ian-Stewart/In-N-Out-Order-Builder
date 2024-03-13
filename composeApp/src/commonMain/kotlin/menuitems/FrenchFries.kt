@@ -2,7 +2,21 @@ package menuitems
 
 data class FrenchFries(
     val cookedLevels: FryCookedLevels = FryCookedLevels.STANDARD,
-    val condiments: List<Condiment> = listOf(),
+    val condiments: List<Condiment> = CondimentType.entries.mapNotNull { condiment ->
+        val level = if (condiment == CondimentType.SALT) {
+            CondimentLevel.STANDARD
+        } else {
+            CondimentLevel.NONE
+        }
+        if (condiment.validOnFries) {
+            Condiment(
+                condimentType = condiment,
+                level = level
+            )
+        } else {
+            null
+        }
+    },
 ): Item {
     override fun menuItemType() = MenuItemType.FRIES
     override fun itemName(): String {

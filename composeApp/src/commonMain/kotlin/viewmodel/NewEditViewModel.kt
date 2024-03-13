@@ -78,7 +78,7 @@ class NewEditViewModel(
 
     private fun onQuantityEvent(event: NewEditEvent.QuantityEvent) {
         val oldItem = currentItem ?: return
-        val editedItem = oldItem.copy(quantity = event.quantity)
+        val editedItem = oldItem.copy(quantity = event.quantity.coerceAtLeast(1).coerceAtMost(99))
         currentItem = editedItem
         resultToViewState(NewEditEventResult.EditItemEventResult(editedItem))
     }

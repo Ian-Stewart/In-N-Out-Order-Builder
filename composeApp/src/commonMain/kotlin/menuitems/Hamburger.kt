@@ -20,20 +20,22 @@ data class Hamburger(
     val mustardFried: Boolean = false,
     val extraWellDone: Boolean = false,
     val slices: Int = 0,
-    val condiments: List<Condiment> = listOf(
+    val condiments: List<Condiment> = CondimentType.entries.map { condiment ->
+        val level = if (condiment in setOf(
+                CondimentType.SPREAD,
+                CondimentType.SALT,
+                CondimentType.LETTUCE,
+                CondimentType.TOMATO)
+            ) {
+            CondimentLevel.STANDARD
+        } else {
+            CondimentLevel.NONE
+        }
         Condiment(
-            condimentType = CondimentType.LETTUCE,
-            level = CondimentLevel.STANDARD
-        ),
-        Condiment(
-            condimentType = CondimentType.TOMATO,
-            level = CondimentLevel.STANDARD
-        ),
-        Condiment(
-            condimentType = CondimentType.SPREAD,
-            level = CondimentLevel.STANDARD
+            condimentType = condiment,
+            level = level
         )
-    )
+    }
 ): Item {
     override fun menuItemType(): MenuItemType = MenuItemType.BURGER
     override fun itemName(): String {
