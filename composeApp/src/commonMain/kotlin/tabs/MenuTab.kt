@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import constants.Dimens
 import constants.ImagePath
 import menuitems.MenuItemType
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -90,8 +91,8 @@ fun ItemCard(
     contentDescription: String,
     onClick: () -> Unit
 ) {
-    Box(modifier = Modifier.padding(4.dp).clickable { onClick() }) {
-        Card(modifier = Modifier.fillMaxWidth().shadow(2.dp)) {
+    Box(modifier = Modifier.padding(Dimens.smallPadding).clickable { onClick() }) {
+        Card(modifier = Modifier.fillMaxWidth().shadow(Dimens.shadowHeight)) {
             Column {
                 Image(
                     painter = backgroundImage,
@@ -102,7 +103,7 @@ fun ItemCard(
                     text = title,
                     style = MaterialTheme.typography.h2,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth().padding(4.dp)
+                    modifier = Modifier.fillMaxWidth().padding(Dimens.smallPadding)
                 )
             }
         }

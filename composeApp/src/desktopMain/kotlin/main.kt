@@ -10,7 +10,7 @@ import androidx.compose.ui.window.rememberWindowState
 fun main() = application {
     val state = rememberWindowState(
         size = DpSize(400.dp, 800.dp),
-        position = WindowPosition(200.dp, 200.dp)
+        position = WindowPosition(50.dp, 50.dp)
     )
     Window(
         onCloseRequest = ::exitApplication,

@@ -2,10 +2,14 @@ package views
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import constants.Dimens
 import menuitems.Extra
 import viewmodel.ExtrasEvent
 import viewmodel.ExtrasViewModel
@@ -65,17 +69,20 @@ fun ExtrasDetail(
 
 @Composable
 fun ExtraRow(name: String, quantity: Int, onAdjustQuantity: (Int) -> Unit) {
-    Row {
-        Button(onClick = {
-            onAdjustQuantity(quantity.minus(1))
-        }) {
-            Text(text = " < ")
-        }
-        Text(text = quantity.toString())
-        Button(onClick = {
-            onAdjustQuantity(quantity.plus(1))
-        }) {
-            Text(text = " > ")
+    Column(modifier = Modifier.padding(Dimens.smallPadding)) {
+        Text(text = name)
+        Row {
+            Button(onClick = {
+                onAdjustQuantity(quantity.minus(1))
+            }) {
+                Text(text = " < ")
+            }
+            Text(text = quantity.toString())
+            Button(onClick = {
+                onAdjustQuantity(quantity.plus(1))
+            }) {
+                Text(text = " > ")
+            }
         }
     }
 }

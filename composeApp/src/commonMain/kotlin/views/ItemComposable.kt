@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -20,7 +21,10 @@ fun ItemComposable(newEditViewModel: NewEditViewModel) {
         Text(text = "Unknown Error!")
     } else {
         Column {
-            Text(text = if (state.value.newItem) { "Add" } else { "Edit" })
+            Text(
+                text = if (state.value.newItem) { "Add" } else { "Edit" },
+                style = MaterialTheme.typography.h2
+            )
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(onClick = { newEditViewModel.onEvent(NewEditEvent.DoneEvent) }) {
                     Text(text = "Done")

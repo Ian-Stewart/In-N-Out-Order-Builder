@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import constants.Dimens
 import repo.CartRepository
 import tabs.CartTab
 import tabs.MenuTab
@@ -59,7 +60,6 @@ fun App() {
         onNewItemClick = { itemType -> newEditViewModel.onEvent(NewEditEvent.NewItemEvent(itemType)) }
     ) }
 
-    val tabHeight = 56.dp
     val menuTab = remember {
         MenuTab(
             menuViewModel = menuViewModel,
@@ -77,10 +77,10 @@ fun App() {
             TabNavigator(menuTab) {
                 Scaffold(
                     content = {
-                        Column(modifier = Modifier.padding(bottom = tabHeight)) { CurrentTab() }
+                        Column(modifier = Modifier.padding(bottom = Dimens.tabHeight)) { CurrentTab() }
                     },
                     bottomBar = {
-                        BottomNavigation(modifier = Modifier.height(tabHeight)) {
+                        BottomNavigation(modifier = Modifier.height(Dimens.tabHeight)) {
                             TabNavigationItem(menuTab)
                             TabNavigationItem(cartTab)
                             TabNavigationItem(readyTab)
@@ -99,7 +99,7 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
     BottomNavigationItem(
         selected = tabNavigator.current == tab,
         onClick = { tabNavigator.current = tab },
-        label = { Text(text = tab.title) },
-        icon = { Icon(painter = tab.icon!!, contentDescription = tab.title) } // TODO remove double bangs
+        label = { Text(text = tab.options.title) },
+        icon = { Icon(painter = tab.options.icon!!, contentDescription = tab.options.title) } // TODO remove double bangs
     )
 }

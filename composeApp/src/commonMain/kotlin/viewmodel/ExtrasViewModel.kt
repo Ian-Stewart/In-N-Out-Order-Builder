@@ -45,15 +45,21 @@ class ExtrasViewModel(
     }
 
     private fun onSetExtraSpreadEvent(event: ExtrasEvent.SetExtraSpreadEvent) {
-        cartRepository.setExtraSpreadQuantity(event.extraSpread)
+        cartRepository.setExtraSpreadQuantity(
+            event.extraSpread.coerceAtLeast(0).coerceAtMost(99)
+        )
     }
 
     private fun onSetPepperPacketsEvent(event: ExtrasEvent.SetPepperPacketsEvent) {
-        cartRepository.setPepperPacketsQuantity(event.pepperPackets)
+        cartRepository.setPepperPacketsQuantity(
+            event.pepperPackets.coerceAtLeast(0).coerceAtMost(99)
+        )
     }
 
     private fun onSetPupPattiesEvent(event: ExtrasEvent.SetPupPattiesEvent) {
-        cartRepository.setPupPattyQuantity(event.pupPatties)
+        cartRepository.setPupPattyQuantity(
+            event.pupPatties.coerceAtLeast(0).coerceAtMost(99)
+        )
     }
 }
 

@@ -32,6 +32,7 @@ class NewEditViewModel(
 
     private var lastCart: Cart = Cart()
     private var currentItem: CartItem? = null
+    private var newItem = false
 
     val stateFlow: StateFlow<NewEditViewState>
         get() = mutableState.asStateFlow()
@@ -55,12 +56,14 @@ class NewEditViewModel(
     }
 
     private fun onEditItemEvent(event: NewEditEvent.EditItemEvent) {
+        newItem = false
         val item = lastCart.cartItems.firstOrNull { it.id == event.cartItemUUID }
         resultToViewState(NewEditEventResult.EditItemEventResult(item))
         onNewOrEdit()
     }
 
     private fun onNewItemEvent(event: NewEditEvent.NewItemEvent) {
+        newItem = true
         val newCartItem: CartItem = when (event.itemType) {
             MenuItemType.BURGER -> CartItem(item = Hamburger())
             MenuItemType.SHAKE -> CartItem(item = Shake())
@@ -111,14 +114,14 @@ class NewEditViewModel(
             is NewEditEventResult.NewItemEventResult -> {
                 mutableState.value.copy(
                     item = result.cartItem,
-                    newItem = true,
+                    newItem = newItem,
                     error = false
                 )
             }
             is NewEditEventResult.EditItemEventResult -> {
                 mutableState.value.copy(
                     item = result.cartItem,
-                    newItem = false,
+                    newItem = newItem,
                     error = result.cartItem == null
                 )
             }
