@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import menuitems.FloatDrink
 import menuitems.FrenchFries
 import menuitems.Hamburger
+import menuitems.Item
 import menuitems.MenuItemType
 import menuitems.Shake
 import menuitems.SoftDrink
@@ -20,6 +21,10 @@ import repo.CartRepository
 
 /**
  * Given a CartItem, edit it and then pass it into the repo
+ * Note: This handles all item types (fries, soda, etc) and doesn't have any fancy logic in it
+ * It just takes whatever changes the user made in the UI and saves it
+ * In a real, not-educational app this would probably be broken down into viewmodels/subviewmodels
+ * But I am not trying to create an enterprise app here, just bang something out to learn a bit :)
  */
 class NewEditViewModel(
     private val cartRepository: CartRepository,
@@ -47,22 +52,24 @@ class NewEditViewModel(
 
     fun onEvent(event: NewEditEvent) {
         when (event) {
-            is NewEditEvent.EditItemEvent -> onEditItemEvent(event)
-            is NewEditEvent.NewItemEvent -> onNewItemEvent(event)
+            is NewEditEvent.EditExistingItemEvent -> onEditItemEvent(event)
+            is NewEditEvent.CreateNewItemEvent -> onNewItemEvent(event)
+            is NewEditEvent.UpdateCurrentItemEvent -> onUpdateCurrentItemEvent(event)
             is NewEditEvent.QuantityEvent -> onQuantityEvent(event)
             is NewEditEvent.DoneEvent -> onDoneEvent()
             is NewEditEvent.CancelEvent -> onCancelEvent()
         }
     }
 
-    private fun onEditItemEvent(event: NewEditEvent.EditItemEvent) {
+    private fun onEditItemEvent(event: NewEditEvent.EditExistingItemEvent) {
         newItem = false
         val item = lastCart.cartItems.firstOrNull { it.id == event.cartItemUUID }
+        currentItem = item
         resultToViewState(NewEditEventResult.EditItemEventResult(item))
         onNewOrEdit()
     }
 
-    private fun onNewItemEvent(event: NewEditEvent.NewItemEvent) {
+    private fun onNewItemEvent(event: NewEditEvent.CreateNewItemEvent) {
         newItem = true
         val newCartItem: CartItem = when (event.itemType) {
             MenuItemType.BURGER -> CartItem(item = Hamburger())
@@ -74,6 +81,16 @@ class NewEditViewModel(
         currentItem = newCartItem
         resultToViewState(NewEditEventResult.NewItemEventResult(newCartItem))
         onNewOrEdit()
+    }
+
+    private fun onUpdateCurrentItemEvent(event: NewEditEvent.UpdateCurrentItemEvent) {
+        newItem = false
+        val cartItem = currentItem ?: run {
+            resultToViewState(NewEditEventResult.EditItemEventResult(cartItem = null))
+            return
+        }
+        currentItem = cartItem.copy(item = event.item)
+        resultToViewState(NewEditEventResult.EditItemEventResult(cartItem))
     }
 
     private fun onQuantityEvent(event: NewEditEvent.QuantityEvent) {
@@ -141,10 +158,35 @@ data class NewEditViewState(
 )
 
 sealed class NewEditEvent {
-    data class NewItemEvent(val itemType: MenuItemType): NewEditEvent()
-    data class EditItemEvent(val cartItemUUID: String): NewEditEvent()
+    /**
+     * The user wishes to create a new item of a given type
+     */
+    data class CreateNewItemEvent(val itemType: MenuItemType): NewEditEvent()
+
+    /**
+     * The user wants to make a change to an existing item in their cart
+     */
+    data class EditExistingItemEvent(val cartItemUUID: String): NewEditEvent()
+
+    /**
+     * The user has made a change to an existing item that we are already displaying
+     */
+    data class UpdateCurrentItemEvent(val item: Item): NewEditEvent()
+
+    /**
+     * The user has edited the quantity of an item that we are already displaying
+     */
     data class QuantityEvent(val quantity: Int): NewEditEvent()
+
+    /**
+     * The user is done making changes to the item we are displaying
+     * and wants to go back to what they were doing before
+     */
     data object DoneEvent: NewEditEvent()
+
+    /**
+     * The user has decided they don't want to add the item they were adding before
+     */
     data object CancelEvent: NewEditEvent()
 }
 
