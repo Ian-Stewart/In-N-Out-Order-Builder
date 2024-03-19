@@ -11,11 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import constants.Dimens
 import menuitems.Extra
+import org.koin.compose.koinInject
 import viewmodel.ExtrasEvent
 import viewmodel.ExtrasViewModel
 
 @Composable
-fun ExtrasComposable(viewModel: ExtrasViewModel) {
+fun ExtrasComposable(
+    onDoneEditingExtras: () -> Unit,
+    viewModel: ExtrasViewModel = koinInject()
+) {
+    viewModel.bindOnDone(onDoneEditingExtras)
     val state = viewModel.stateFlow.collectAsState()
     Column {
         Text(text = "Extras")

@@ -13,18 +13,22 @@ import repo.CartRepository
 
 class ExtrasViewModel(
     private val cartRepository: CartRepository,
-    private val onDone: () -> Unit,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
-
     private val scope = CoroutineScope(Job() + dispatcher)
     private val mutableState = MutableStateFlow(ExtrasViewState())
+
+    private var onDone: () -> Unit = {}
 
     val stateFlow: StateFlow<ExtrasViewState>
         get() = mutableState.asStateFlow()
 
     init {
         scope.launch { cartRepository.cart.collect{ onNewCart(it) } }
+    }
+
+    fun bindOnDone(done: () -> Unit) {
+        onDone = done
     }
 
     private fun onNewCart(cart: Cart) {

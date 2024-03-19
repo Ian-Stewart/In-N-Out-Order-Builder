@@ -28,12 +28,13 @@ import repo.CartRepository
  */
 class NewEditViewModel(
     private val cartRepository: CartRepository,
-    private val onNewOrEdit: () -> Unit,
-    private val onDone: () -> Unit,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private val scope = CoroutineScope(Job() + dispatcher)
     private val mutableState = MutableStateFlow(NewEditViewState())
+
+    private var onNewOrEdit: () -> Unit = {}
+    private var onDone: () -> Unit = {}
 
     private var lastCart: Cart = Cart()
     private var currentItem: CartItem? = null
@@ -44,6 +45,14 @@ class NewEditViewModel(
 
     init {
         scope.launch { cartRepository.cart.collect{ onNewCart(it) } }
+    }
+
+    fun bindOnNewOrEdit(onNewEdit: () -> Unit) {
+        onNewOrEdit = onNewEdit
+    }
+
+    fun bindOnDone(done: () -> Unit) {
+        onDone = done
     }
 
     private fun onNewCart(cart: Cart) {

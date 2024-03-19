@@ -1,6 +1,5 @@
 package tabs
 
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
@@ -11,9 +10,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import viewmodel.CartViewModel
 import views.CartComposable
 
-class CartTab(
-    private val cartViewModel: CartViewModel
-) : Tab {
+class CartTab() : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -31,7 +28,7 @@ class CartTab(
 
     @Composable
     override fun Content() {
-        CartComposable(viewModel = cartViewModel)
+        CartComposable()
     }
 }
 

@@ -1,8 +1,11 @@
 package views.pickers
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -17,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import constants.Dimens
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -27,11 +31,11 @@ fun <T> MultiPicker(
     selected: MultiPickerOption<T>,
     onSelect: (T) -> Unit
 ) {
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = sectionName, style = MaterialTheme.typography.h3)
-        if (options.size <= 6) {
+        if (options.size <= 3) {
             Column {
-                Row {
+                Row(modifier = Modifier.padding(Dimens.smallPadding), horizontalArrangement = Arrangement.SpaceEvenly) {
                     options.map { option ->
                         val buttonBackground = if (option.uiString == selected.uiString) {
                             MaterialTheme.colors.primary
@@ -59,7 +63,7 @@ fun <T> MultiPicker(
                     readOnly = true,
                     value = selected.uiString,
                     onValueChange = { },
-                    label = { Text("Label") },
+                    label = {  },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                     },

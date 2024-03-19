@@ -36,12 +36,12 @@ import constants.ImagePath
 import menuitems.MenuItemType
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import utils.MenuItemImage.Companion.headerImageForType
 import viewmodel.MenuEvent
 import viewmodel.MenuViewModel
 
 class MenuTab(
-    private val menuViewModel: MenuViewModel,
     private val onEditExtras: () -> Unit
 ) : Tab {
     override val options: TabOptions
@@ -62,6 +62,7 @@ class MenuTab(
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
+        val menuViewModel: MenuViewModel = koinInject()
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             Text(text = "Menu", modifier = Modifier.fillMaxWidth(), style = MaterialTheme.typography.h1, color = MaterialTheme.colors.onSurface)
             MenuItemType.entries.map { type ->

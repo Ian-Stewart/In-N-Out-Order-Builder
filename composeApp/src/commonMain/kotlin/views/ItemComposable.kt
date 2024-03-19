@@ -1,8 +1,12 @@
 package views
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
@@ -22,6 +26,7 @@ import menuitems.ShakeSize
 import menuitems.SoftDrink
 import menuitems.SoftDrinkSize
 import menuitems.SoftDrinkType
+import org.koin.compose.koinInject
 import viewmodel.NewEditEvent
 import viewmodel.NewEditViewModel
 import views.pickers.BooleanPicker
@@ -36,25 +41,24 @@ import views.pickers.QuantitySelector
  * good or maintainable or whatever. Make of that what you will!
  */
 @Composable
-fun ItemComposable(newEditViewModel: NewEditViewModel) {
+fun ItemComposable(
+    onDone: () -> Unit,
+    newEditViewModel: NewEditViewModel = koinInject()
+) {
+    newEditViewModel.bindOnDone(onDone)
+    newEditViewModel.bindOnNewOrEdit(onNewOrEdit)
+
     val state = newEditViewModel.stateFlow.collectAsState()
     val cartItem = state.value.item
     if (cartItem == null || state.value.error) {
         NullItemDetails()
     } else {
-        Column {
+        val scrollState = rememberScrollState()
+        Column(modifier = Modifier.fillMaxHeight().verticalScroll(scrollState), verticalArrangement = Arrangement.SpaceBetween) {
             Text(
                 text = if (state.value.newItem) { "Add" } else { "Edit" },
                 style = MaterialTheme.typography.h2
             )
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = { newEditViewModel.onEvent(NewEditEvent.DoneEvent) }) {
-                    Text(text = "Done")
-                }
-                Button(onClick = { newEditViewModel.onEvent(NewEditEvent.CancelEvent) }) {
-                    Text(text = "Cancel")
-                }
-            }
             // Name
             Text(text = cartItem.item.itemName())
 
@@ -79,6 +83,14 @@ fun ItemComposable(newEditViewModel: NewEditViewModel) {
                 }
                 is Shake -> {
                     ShakeSection(shake = cartItem.item, viewModel = newEditViewModel)
+                }
+            }
+            Row(modifier = Modifier.fillMaxWidth().weight(1f, false)) {
+                Button(onClick = { newEditViewModel.onEvent(NewEditEvent.DoneEvent) }) {
+                    Text(text = "Done")
+                }
+                Button(onClick = { newEditViewModel.onEvent(NewEditEvent.CancelEvent) }) {
+                    Text(text = "Cancel")
                 }
             }
         }

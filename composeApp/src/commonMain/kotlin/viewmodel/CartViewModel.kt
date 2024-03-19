@@ -13,18 +13,32 @@ import repo.CartRepository
 
 class CartViewModel(
     private val cartRepository: CartRepository,
-    private val onEditItem: (String) -> Unit,
-    private val onEditExtras: () -> Unit,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private val scope = CoroutineScope(Job() + dispatcher)
     private val mutableState = MutableStateFlow(CartViewState())
+
+    private var onEditItem: (String) -> Unit = {}
+    private var onEditExtras: () -> Unit = {}
 
     val stateFlow: StateFlow<CartViewState>
         get() = mutableState.asStateFlow()
 
     init {
         scope.launch { cartRepository.cart.collect{ onNewCart(it) } }
+    }
+
+    // TODO there's probably a nicer way to do this, but it's not coming to me this morning
+    // I don't think I want my DI messing with nav?
+    // Will need to read more voyager docs
+    // Still, this is nicer than the spaghetti in App.kt
+    fun bindOnEditItem(onEdit: (String) -> Unit) {
+        onEditItem = onEdit
+    }
+
+    // TODO See comment above
+    fun bindOnEditExtras(onExtras: () -> Unit) {
+        onEditExtras = onExtras
     }
 
     private fun onNewCart(cart: Cart) {

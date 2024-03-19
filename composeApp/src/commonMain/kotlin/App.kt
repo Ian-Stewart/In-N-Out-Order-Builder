@@ -20,6 +20,8 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import constants.Dimens
+import menuitems.MenuItemType
+import org.koin.compose.koinInject
 import repo.CartRepository
 import tabs.CartTab
 import tabs.MenuTab
@@ -35,52 +37,32 @@ import views.ItemComposable
 
 @Composable
 fun App() {
-    // TODO set this up properly, just being a little lazy here tbh
-    val repository = remember { CartRepository() }
-
     var isEditingExtras by remember { mutableStateOf(false) }
     var isEditingItem by remember { mutableStateOf(false) }
 
-    val extrasViewModel = remember { ExtrasViewModel(repository, { isEditingExtras = false }) }
-    val newEditViewModel = remember { NewEditViewModel(
-        cartRepository = repository,
-        onNewOrEdit = { isEditingItem = true },
-        onDone = { isEditingItem = false }
-    ) }
-    val orderViewModel = remember { OrderViewModel(repository) }
-    val cartViewModel = remember { CartViewModel(
-        cartRepository = repository,
-        onEditExtras = { isEditingExtras = true },
-        onEditItem = { cartItemUUID ->
-            newEditViewModel.onEvent(NewEditEvent.EditItemEvent(cartItemUUID))
-        }
-    ) }
-    val menuViewModel = remember { MenuViewModel(
-        onExtrasClick = { isEditingExtras = true },
-        onNewItemClick = { itemType -> newEditViewModel.onEvent(NewEditEvent.NewItemEvent(itemType)) }
-    ) }
+    val onDoneEditingExtras: () -> Unit = { isEditingExtras = false }
+    val onStopEditingItem: () -> Unit = { isEditingItem = false }
+    //val onEditCartItem: (String) -> Unit = { cartItemUUID -> newEditViewModel.onEvent(NewEditEvent.EditExistingItemEvent(cartItemUUID)) }
+    //val onNewItem: (MenuItemType) -> Unit = { itemType -> newEditViewModel.onEvent(NewEditEvent.CreateNewItemEvent(itemType)) }
 
-    val menuTab = remember {
-        MenuTab(
-            menuViewModel = menuViewModel,
-            onEditExtras = { isEditingExtras = true }
-        )
-    }
-    val cartTab = remember { CartTab(cartViewModel) }
-    val readyTab = remember { ReadyTab(orderViewModel) }
+    val menuTab = MenuTab(onEditExtras = { isEditingExtras = true })
+    val cartTab = CartTab()
+    val readyTab = ReadyTab()
     MaterialTheme {
         if (isEditingExtras) {
-            ExtrasComposable(extrasViewModel)
+            ExtrasComposable(onDoneEditingExtras = onDoneEditingExtras)
         } else if (isEditingItem) {
-            ItemComposable(newEditViewModel)
+            ItemComposable(onDone = onStopEditingItem)
         } else {
             TabNavigator(menuTab) {
                 Scaffold(
-                    content = {
-                        Column(modifier = Modifier.padding(bottom = Dimens.tabHeight)) { CurrentTab() }
+                    content = { Column(
+                        modifier = Modifier.padding(bottom = Dimens.tabHeight)) {
+                            CurrentTab()
+                        }
                     },
-                    bottomBar = {
-                        BottomNavigation(modifier = Modifier.height(Dimens.tabHeight)) {
+                    bottomBar = { BottomNavigation(
+                        modifier = Modifier.height(Dimens.tabHeight)) {
                             TabNavigationItem(menuTab)
                             TabNavigationItem(cartTab)
                             TabNavigationItem(readyTab)

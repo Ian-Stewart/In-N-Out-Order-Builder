@@ -19,13 +19,14 @@ import androidx.compose.ui.unit.dp
 import constants.Dimens
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import repo.CartItem
 import utils.MenuItemImage
 import viewmodel.CartEvent
 import viewmodel.CartViewModel
 
 @Composable
-fun CartComposable(viewModel: CartViewModel) {
+fun CartComposable(viewModel: CartViewModel = koinInject()) {
     val state = viewModel.stateFlow.collectAsState()
     val cart = state.value.cart
     Column {

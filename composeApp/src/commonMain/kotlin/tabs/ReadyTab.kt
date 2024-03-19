@@ -16,9 +16,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import constants.Dimens
+import org.koin.compose.koinInject
 import viewmodel.OrderViewModel
 
-class ReadyTab(private val viewModel: OrderViewModel) : Tab {
+class ReadyTab : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -36,9 +37,10 @@ class ReadyTab(private val viewModel: OrderViewModel) : Tab {
 
     @Composable
     override fun Content() {
+        val orderViewModel: OrderViewModel = koinInject()
         Column {
             TextField(value = "Ready to Order?", onValueChange = {})
-            val state = viewModel.stateFlow.collectAsState()
+            val state = orderViewModel.stateFlow.collectAsState()
             val cartItems = state.value.orderItems
             LazyColumn {
                 items(items = cartItems, itemContent = { item -> Text(text = item)})

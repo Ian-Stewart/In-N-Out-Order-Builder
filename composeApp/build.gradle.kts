@@ -53,6 +53,8 @@ kotlin {
             implementation(libs.voyager.transitions)
             // For Koin
             implementation(libs.voyager.koin)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
         }
     }
 }
