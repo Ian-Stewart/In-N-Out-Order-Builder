@@ -12,7 +12,6 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import menuitems.Buns
 import menuitems.Condiment
@@ -26,162 +25,148 @@ import menuitems.ShakeSize
 import menuitems.SoftDrink
 import menuitems.SoftDrinkSize
 import menuitems.SoftDrinkType
-import org.koin.compose.koinInject
+import repo.CartItem
 import viewmodel.NewEditEvent
-import viewmodel.NewEditViewModel
 import views.pickers.BooleanPicker
 import views.pickers.MultiPicker
 import views.pickers.MultiPickerOption
 import views.pickers.QuantitySelector
 
-/**
- * Composable to edit items
- * TODO this should be broken down into sub-composables and have some stuff moved into the viewmodel
- * However, again, I am mostly trying to get something that works in compose multiplatform, not be like,
- * good or maintainable or whatever. Make of that what you will!
- */
+
 @Composable
-fun ItemComposable(
-    onDone: () -> Unit,
-    newEditViewModel: NewEditViewModel = koinInject()
+fun ItemDetail(
+    cartItem: CartItem,
+    isNewItem: Boolean,
+    eventHandler: (NewEditEvent) -> Unit
 ) {
-    newEditViewModel.bindOnDone(onDone)
-    newEditViewModel.bindOnNewOrEdit(onNewOrEdit)
+    val scrollState = rememberScrollState()
+    Column(modifier = Modifier.fillMaxHeight().verticalScroll(scrollState), verticalArrangement = Arrangement.SpaceBetween) {
+        Text(
+            text = if (isNewItem) { "Add" } else { "Edit" },
+            style = MaterialTheme.typography.h2
+        )
+        // Name
+        Text(text = cartItem.item.itemName())
 
-    val state = newEditViewModel.stateFlow.collectAsState()
-    val cartItem = state.value.item
-    if (cartItem == null || state.value.error) {
-        NullItemDetails()
-    } else {
-        val scrollState = rememberScrollState()
-        Column(modifier = Modifier.fillMaxHeight().verticalScroll(scrollState), verticalArrangement = Arrangement.SpaceBetween) {
-            Text(
-                text = if (state.value.newItem) { "Add" } else { "Edit" },
-                style = MaterialTheme.typography.h2
-            )
-            // Name
-            Text(text = cartItem.item.itemName())
+        QuantitySelector(
+            titleString = "Quantity",
+            currentQuantity = cartItem.quantity,
+            onQuantityChanged = { quantity: Int -> eventHandler(NewEditEvent.QuantityEvent(quantity)) }
+        )
 
-            QuantitySelector(
-                titleString = "Quantity",
-                currentQuantity = cartItem.quantity,
-                onQuantityChanged = { quantity: Int -> newEditViewModel.onEvent(NewEditEvent.QuantityEvent(quantity)) }
-            )
-
-            when (cartItem.item) {
-                is Hamburger -> {
-                    HamburgerSection(hamburger = cartItem.item, viewModel = newEditViewModel)
-                }
-                is FrenchFries -> {
-                    FrySection(frenchFries = cartItem.item, viewModel = newEditViewModel)
-                }
-                is FloatDrink -> {
-                    FloatSection(float = cartItem.item, viewModel = newEditViewModel)
-                }
-                is SoftDrink -> {
-                    SoftDrinkSection(softDrink = cartItem.item, viewModel = newEditViewModel)
-                }
-                is Shake -> {
-                    ShakeSection(shake = cartItem.item, viewModel = newEditViewModel)
-                }
+        when (cartItem.item) {
+            is Hamburger -> {
+                HamburgerSection(hamburger = cartItem.item, eventHandler = eventHandler)
             }
-            Row(modifier = Modifier.fillMaxWidth().weight(1f, false)) {
-                Button(onClick = { newEditViewModel.onEvent(NewEditEvent.DoneEvent) }) {
-                    Text(text = "Done")
-                }
-                Button(onClick = { newEditViewModel.onEvent(NewEditEvent.CancelEvent) }) {
-                    Text(text = "Cancel")
-                }
+            is FrenchFries -> {
+                FrySection(frenchFries = cartItem.item, eventHandler = eventHandler)
+            }
+            is FloatDrink -> {
+                FloatSection(float = cartItem.item, eventHandler = eventHandler)
+            }
+            is SoftDrink -> {
+                SoftDrinkSection(softDrink = cartItem.item, eventHandler = eventHandler)
+            }
+            is Shake -> {
+                ShakeSection(shake = cartItem.item, eventHandler = eventHandler)
+            }
+        }
+        Row(modifier = Modifier.fillMaxWidth().weight(1f, false)) {
+            Button(onClick = { eventHandler(NewEditEvent.DoneEvent) }) {
+                Text(text = "Done")
+            }
+            Button(onClick = { eventHandler(NewEditEvent.CancelEvent) }) {
+                Text(text = "Cancel")
             }
         }
     }
 }
 
 @Composable
-private fun ShakeSection(shake: Shake, viewModel: NewEditViewModel) {
+private fun ShakeSection(shake: Shake, eventHandler: (NewEditEvent) -> Unit) {
     ShakeDetails(
         shake = shake,
         onVanillaCheckChanged = { vanilla ->
             val newShake = shake.copy(containsVanilla = vanilla)
-            viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newShake))
+            eventHandler(NewEditEvent.UpdateCurrentItemEvent(newShake))
         },
         onChocolateCheckChanged = { chocolate ->
             val newShake = shake.copy(containsChocolate = chocolate)
-            viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newShake))
+            eventHandler(NewEditEvent.UpdateCurrentItemEvent(newShake))
         },
         onStrawberryCheckChanged = { strawberry ->
             val newShake = shake.copy(containsStrawberry = strawberry)
-            viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newShake))
+            eventHandler(NewEditEvent.UpdateCurrentItemEvent(newShake))
         },
         onCupsChanged = { cups ->
             val newShake = shake.copy(splitIntoCups = cups)
-            viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newShake))
+            eventHandler(NewEditEvent.UpdateCurrentItemEvent(newShake))
         },
         onSizeSelect = { shakeSize ->
             val newShake = shake.copy(size = shakeSize)
-            viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newShake))
+            eventHandler(NewEditEvent.UpdateCurrentItemEvent(newShake))
         }
     )
 }
 
 @Composable
-private fun SoftDrinkSection(softDrink: SoftDrink, viewModel: NewEditViewModel) {
+private fun SoftDrinkSection(softDrink: SoftDrink, eventHandler: (NewEditEvent) -> Unit) {
     Column {
         SoftDrinkFlavor(
             flavor = softDrink.type,
             onFlavorChanged = { newFlavor ->
                 val newSoda = softDrink.copy(type = newFlavor)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newSoda))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newSoda))
             }
         )
         SoftDrinkSize(
             size = softDrink.size,
             onSizeSelect = { size ->
                 val newSoda = softDrink.copy(size = size)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newSoda))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newSoda))
             }
         )
     }
 }
 
 @Composable
-private fun FloatSection(float: FloatDrink, viewModel: NewEditViewModel) {
+private fun FloatSection(float: FloatDrink, eventHandler: (NewEditEvent) -> Unit) {
     Column {
         SoftDrinkFlavor(
             flavor = float.softDrinkType,
             onFlavorChanged = { newFlavor ->
                 val newSoda = float.copy(softDrinkType = newFlavor)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newSoda))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newSoda))
             }
         )
         ShakeDetails(
             shake = float.shake,
             onVanillaCheckChanged = { vanilla ->
                 val newFloat = float.copy(shake = float.shake.copy(containsVanilla = vanilla))
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newFloat))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newFloat))
             },
             onChocolateCheckChanged = { chocolate ->
                 val newFloat = float.copy(shake = float.shake.copy(containsChocolate = chocolate))
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newFloat))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newFloat))
             },
             onStrawberryCheckChanged = { strawberry ->
                 val newFloat = float.copy(shake = float.shake.copy(containsStrawberry = strawberry))
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newFloat))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newFloat))
             },
             onCupsChanged = { cups ->
                 val newFloat = float.copy(shake = float.shake.copy(splitIntoCups = cups))
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newFloat))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newFloat))
             },
             onSizeSelect = { shakeSize ->
                 val newFloat = float.copy(shake = float.shake.copy(size = shakeSize))
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newFloat))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newFloat))
             }
         )
     }
 }
 
 @Composable
-private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) {
+private fun HamburgerSection(hamburger: Hamburger, eventHandler: (NewEditEvent) -> Unit) {
     Column {
         MultiPicker(
             sectionName = "Buns",
@@ -197,7 +182,7 @@ private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) 
             ),
             onSelect = { bun ->
                 val newBurger = hamburger.copy(buns = bun)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newBurger))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
             }
         )
         QuantitySelector(
@@ -205,7 +190,7 @@ private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) 
             currentQuantity = hamburger.patties,
             onQuantityChanged = { newPattiesCount ->
                 val newBurger = hamburger.copy(patties = newPattiesCount)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newBurger))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
             },
         )
         QuantitySelector(
@@ -213,7 +198,7 @@ private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) 
             currentQuantity = hamburger.slices,
             onQuantityChanged = { newSlicesCount ->
                 val newBurger = hamburger.copy(slices = newSlicesCount)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newBurger))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
             },
         )
         BooleanPicker(
@@ -225,7 +210,7 @@ private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) 
             value = hamburger.mustardFried,
             onSelect = { mf ->
                 val newBurger = hamburger.copy(mustardFried = mf)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newBurger))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
             }
         )
         BooleanPicker(
@@ -237,7 +222,7 @@ private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) 
             value = hamburger.extraWellDone,
             onSelect = { ewd ->
                 val newBurger = hamburger.copy(extraWellDone = ewd)
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newBurger))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
             }
         )
         hamburger.condiments.map { c ->
@@ -253,7 +238,7 @@ private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) 
                             }
                         }
                     )
-                    viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newBurger))
+                    eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
                 }
             )
         }
@@ -261,7 +246,7 @@ private fun HamburgerSection(hamburger: Hamburger, viewModel: NewEditViewModel) 
 }
 
 @Composable
-private fun FrySection(frenchFries: FrenchFries, viewModel: NewEditViewModel) {
+private fun FrySection(frenchFries: FrenchFries, eventHandler: (NewEditEvent) -> Unit) {
     MultiPicker(
         sectionName = "Done-ness", // TODO Resource string
         options = FryCookedLevels.entries.map { level ->
@@ -278,7 +263,7 @@ private fun FrySection(frenchFries: FrenchFries, viewModel: NewEditViewModel) {
         ),
         onSelect = { level: FryCookedLevels ->
             val newFries = frenchFries.copy(cookedLevels = level)
-            viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newFries))
+            eventHandler(NewEditEvent.UpdateCurrentItemEvent(newFries))
         }
     )
     frenchFries.condiments.map { c ->
@@ -294,7 +279,7 @@ private fun FrySection(frenchFries: FrenchFries, viewModel: NewEditViewModel) {
                         }
                     }
                 )
-                viewModel.onEvent(NewEditEvent.UpdateCurrentItemEvent(newFries))
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newFries))
             }
         )
     }
@@ -316,7 +301,7 @@ private fun CondimentPicker(condiment: Condiment, onCondimentLevelChanged: (Cond
             uiString = condiment.level.uiString
         ),
         onSelect = onCondimentLevelChanged
-        )
+    )
 }
 
 @Composable
@@ -415,6 +400,12 @@ private fun ShakeDetails(
 }
 
 @Composable
-private fun NullItemDetails() {
-    Text(text = "Item is null")
+fun ItemDetailsLoading() {
+    // TODO This could be a spinner or something
+    Text(text = "Loading")
+}
+
+@Composable
+fun ItemDetailsError() {
+    Text("Oh no!")
 }

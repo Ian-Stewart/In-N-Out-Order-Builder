@@ -118,8 +118,7 @@ class NewEditViewModel(
             return
         }
         currentItem = null
-        val state = mutableState.value
-        if (state.newItem) {
+        if (newItem) {
             cartRepository.addNewItemToCart(item)
         } else {
             cartRepository.editExistingCartitem(item)
