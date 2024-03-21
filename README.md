@@ -1,6 +1,10 @@
 # In-N-Out-Order-Builder
  A simple app to build your In-N-Out order without knowing the code words. Mostly this is for me to learn a little bit about Compose Multiplatform (how good it is, how nice it is to Android/iOS/Desktop/etc) and play with some other libraries. Built using Voyager (for Navigation and other little things), Compose Multiplatform, Koin (for DI).
 
+![menu screen with tabs](./images-readme/menu.png)
+
+![item details screen](./images-readme/dialog.png)
+
 # Notes
  If you are building on a non-OSX host, you will see a warning when you build:
  ```
