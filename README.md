@@ -13,6 +13,13 @@ iosArm64, iosSimulatorArm64, iosX64
 ```
 It's fine, don't worry about it.
 
-## A Note for Recruiters and Peers
-I created this project to get my hands dirty with Compose Multiplatform. Although I apply basic design patterns (MVVM, etc), this code was written for no payment in my spare time. It is not representative of my professional work :)
+# Known Deficiencies
+- There aren't really any nice animations. I love animations! But I wanted the app working first
+- Strings are hardcoded, and not retrieved from resource files. I haven't looked into how to do this in compose multiplatform.
+- I haven't actually tested this on iOS yet (I don't have an iOS device), but it should work with pretty minimal modifications.
+- There is a little bit of jank when it comes to passing in navigation actions into the viewmodels. In my opinion it's OK for an app of this scope, but, you know, do as I say and all that!
 
+## A note for fellow engineers
+I created this project to get my hands dirty with Compose Multiplatform. Although I apply basic design patterns (MVVM, etc), this code was written for no payment in my spare time.
+
+Please understand this is not something I would be comfortable releasing to the public as a complete application.
