@@ -1,10 +1,16 @@
 package views.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -21,7 +27,7 @@ class ExtrasScreen: Screen {
         val navigator = LocalNavigator.currentOrThrow
         viewModel.bindOnDone { navigator.pop() }
         val state = viewModel.stateFlow.collectAsState()
-        Column {
+        Column(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
             Text(text = "Extras")
             ExtrasDetail(
                 pepperPackets = state.value.pepperPackets,
@@ -54,7 +60,7 @@ fun ExtrasDetail(
     onAdjustPupPattyQuantity: (Int) -> Unit,
     onAdjustSpreadQuantity: (Int) -> Unit
 ) {
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         QuantitySelector(
             titleString = Extra.PEPPER_PACKET.itemName(),
             currentQuantity = pepperPackets,
@@ -71,18 +77,4 @@ fun ExtrasDetail(
             onQuantityChanged = onAdjustPupPattyQuantity
         )
     }
-}
-
-
-
-@Composable
-fun ExtrasPreview() {
-    ExtrasDetail(
-        spreadPackets = 1,
-        pupPatties = 1,
-        pepperPackets = 1,
-        onAdjustPepperQuantity = { _ -> },
-        onAdjustPupPattyQuantity = { _ -> },
-        onAdjustSpreadQuantity = { _ -> }
-    )
 }

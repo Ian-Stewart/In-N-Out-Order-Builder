@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.shadow
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import constants.Dimens
+import constants.Dims
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
@@ -57,7 +57,7 @@ class CartScreen : Screen {
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     fun CartItemCard(cartItem: CartItem, onEditClick: (String) -> Unit) {
-        Card(modifier = Modifier.fillMaxWidth().shadow(Dimens.shadowHeight).clickable { onEditClick(cartItem.id) }) {
+        Card(modifier = Modifier.fillMaxWidth().shadow(Dims.shadowHeight).clickable { onEditClick(cartItem.id) }) {
             Column {
                 val icon = painterResource(MenuItemImage.headerImageForType(cartItem.item.menuItemType()))
                 val description = cartItem.item.itemName()

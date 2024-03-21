@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -13,6 +14,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import constants.Dims
 import menuitems.Buns
 import menuitems.Condiment
 import menuitems.CondimentLevel
@@ -40,13 +42,16 @@ fun ItemDetail(
     eventHandler: (NewEditEvent) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    Column(modifier = Modifier.fillMaxHeight().verticalScroll(scrollState), verticalArrangement = Arrangement.SpaceBetween) {
+    Column(
+        modifier = Modifier.fillMaxHeight().verticalScroll(scrollState).padding(Dims.smPad),
+        verticalArrangement = Arrangement.SpaceBetween) {
         Text(
             text = if (isNewItem) { "Add" } else { "Edit" },
-            style = MaterialTheme.typography.h2
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(Dims.smPad)
         )
         // Name
-        Text(text = cartItem.item.itemName())
+        Text(text = cartItem.item.itemName(), modifier = Modifier.padding(Dims.smPad))
 
         QuantitySelector(
             titleString = "Quantity",
@@ -168,23 +173,6 @@ private fun FloatSection(float: FloatDrink, eventHandler: (NewEditEvent) -> Unit
 @Composable
 private fun HamburgerSection(hamburger: Hamburger, eventHandler: (NewEditEvent) -> Unit) {
     Column {
-        MultiPicker(
-            sectionName = "Buns",
-            options = Buns.entries.map {
-                MultiPickerOption(
-                    value = it,
-                    uiString = it.uiString
-                )
-            },
-            selected = MultiPickerOption(
-                value = hamburger.buns,
-                uiString = hamburger.buns.uiString
-            ),
-            onSelect = { bun ->
-                val newBurger = hamburger.copy(buns = bun)
-                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
-            }
-        )
         QuantitySelector(
             titleString = "Patties", // TODO Resource String
             currentQuantity = hamburger.patties,
@@ -222,6 +210,23 @@ private fun HamburgerSection(hamburger: Hamburger, eventHandler: (NewEditEvent) 
             value = hamburger.extraWellDone,
             onSelect = { ewd ->
                 val newBurger = hamburger.copy(extraWellDone = ewd)
+                eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
+            }
+        )
+        MultiPicker(
+            sectionName = "Buns",
+            options = Buns.entries.map {
+                MultiPickerOption(
+                    value = it,
+                    uiString = it.uiString
+                )
+            },
+            selected = MultiPickerOption(
+                value = hamburger.buns,
+                uiString = hamburger.buns.uiString
+            ),
+            onSelect = { bun ->
+                val newBurger = hamburger.copy(buns = bun)
                 eventHandler(NewEditEvent.UpdateCurrentItemEvent(newBurger))
             }
         )

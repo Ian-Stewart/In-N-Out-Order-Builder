@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import constants.Dimens
+import constants.Dims
 import constants.ImagePath
 import menuitems.MenuItemType
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -66,8 +66,8 @@ class MenuScreen: Screen {
         contentDescription: String,
         onClick: () -> Unit
     ) {
-        Box(modifier = Modifier.padding(Dimens.smallPadding).clickable { onClick() }) {
-            Card(modifier = Modifier.fillMaxWidth().shadow(Dimens.shadowHeight)) {
+        Box(modifier = Modifier.padding(Dims.smPad).clickable { onClick() }) {
+            Card(modifier = Modifier.fillMaxWidth().shadow(Dims.shadowHeight)) {
                 Column {
                     Image(
                         painter = backgroundImage,
@@ -78,7 +78,7 @@ class MenuScreen: Screen {
                         text = title,
                         style = MaterialTheme.typography.h2,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth().padding(Dimens.smallPadding)
+                        modifier = Modifier.fillMaxWidth().padding(Dims.smPad)
                     )
                 }
             }

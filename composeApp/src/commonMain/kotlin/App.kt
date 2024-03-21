@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import constants.Dimens
+import constants.Dims
 import views.tabs.CartTab
 import views.tabs.MenuTab
 import views.tabs.ReadyTab
@@ -26,10 +26,10 @@ fun App() {
         TabNavigator(menuTab) {
             Scaffold(
                 content = {
-                    Column(modifier = Modifier.padding(bottom = Dimens.tabHeight)) { CurrentTab() }
+                    Column(modifier = Modifier.padding(bottom = Dims.tabHeight)) { CurrentTab() }
                 },
                 bottomBar = {
-                    BottomNavigation(modifier = Modifier.height(Dimens.tabHeight)) {
+                    BottomNavigation(modifier = Modifier.height(Dims.tabHeight)) {
                         TabNavigationItem(MenuTab())
                         TabNavigationItem(CartTab())
                         TabNavigationItem(ReadyTab())
