@@ -21,6 +21,7 @@ It's fine, don't worry about it.
 - The item configuration screen requires double-tapping selecitons to work (I have seen stuff like this before, it's probably something silly). 
 - The item name generation isn't working right, and needs unit tests. Specifically, the logic to say "No spread" or other default toppings is being applied to all toppings, which is wrong and overly verbose.
 - The app doesn't have an appopriate theme (just KMP defaults). I presume the Jetpack Compose Theme Designer could be made to work with this, but I haven't investigated yet.
+- No app icon! Just haven't made one yet. Oops!
 
 ## A note for fellow engineers
 I created this project to get my hands dirty with Compose Multiplatform. Although I apply basic design patterns (MVVM, etc), this code was written for no payment in my spare time.
