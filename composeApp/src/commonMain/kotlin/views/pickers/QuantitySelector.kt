@@ -37,11 +37,7 @@ fun QuantitySelector(
             }
             TextField(
                 value = currentQuantity.toString(),
-                modifier = Modifier
-                    .weight(0.5f)
-                    .height(Dims.rowHeight)
-                    .padding(Dims.smPad)
-                ,
+                modifier = Modifier.weight(0.5f).height(Dims.rowHeight).padding(Dims.smPad),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 maxLines = 1,
                 textStyle = MaterialTheme.typography.h6,

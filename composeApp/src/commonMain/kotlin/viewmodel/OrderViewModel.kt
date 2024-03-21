@@ -29,22 +29,26 @@ class OrderViewModel(
     }
 
     private fun onNewCart(cart: Cart) {
-        val items = cart.cartItems.map { item ->
-            "${item.quantity} X ${item.item.itemName()}"
+        val items = cart.cartItems.map { item -> OrderItem(name = item.item.itemName(), count = item.quantity)
         }.toMutableList()
         if (cart.spreadPackets > 0) {
-            items.add("${cart.spreadPackets} X ${Extra.SPREAD_PACKET.itemName()}")
+            items.add(OrderItem(name = Extra.SPREAD_PACKET.itemName(), count = cart.spreadPackets))
         }
         if (cart.pepperPackets > 0) {
-            items.add("${cart.pepperPackets} X ${Extra.PEPPER_PACKET.itemName()}")
+            items.add(OrderItem(name = Extra.PEPPER_PACKET.itemName(), count = cart.pepperPackets))
         }
         if (cart.pupPatties > 0) {
-            items.add("${cart.pupPatties} X ${Extra.PUP_PATTY.itemName()}")
+            items.add(OrderItem(name = Extra.PUP_PATTY.itemName(), count = cart.pupPatties))
         }
         mutableState.value = OrderViewState(orderItems = items)
     }
 }
 
 data class OrderViewState(
-    val orderItems: List<String>
+    val orderItems: List<OrderItem>
+)
+
+data class OrderItem(
+    val name: String,
+    val count: Int
 )

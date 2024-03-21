@@ -3,17 +3,21 @@ package views
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import constants.Dims
 import menuitems.Buns
 import menuitems.Condiment
@@ -41,50 +45,51 @@ fun ItemDetail(
     isNewItem: Boolean,
     eventHandler: (NewEditEvent) -> Unit
 ) {
-    val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier.fillMaxHeight().verticalScroll(scrollState).padding(Dims.smPad),
-        verticalArrangement = Arrangement.SpaceBetween) {
-        Text(
-            text = if (isNewItem) { "Add" } else { "Edit" },
-            style = MaterialTheme.typography.h3,
-            modifier = Modifier.padding(Dims.smPad)
-        )
-        // Name
-        Text(text = cartItem.item.itemName(), modifier = Modifier.padding(Dims.smPad))
+    val bottomBarHeight = 60.dp
+    Scaffold(
+        topBar = {},
+        content = {
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier.fillMaxHeight().verticalScroll(scrollState).padding(Dims.smPad),
+                verticalArrangement = Arrangement.SpaceBetween) {
 
-        QuantitySelector(
-            titleString = "Quantity",
-            currentQuantity = cartItem.quantity,
-            onQuantityChanged = { quantity: Int -> eventHandler(NewEditEvent.QuantityEvent(quantity)) }
-        )
+                Text(
+                    text = if (isNewItem) { "Add" } else { "Edit" },
+                    style = MaterialTheme.typography.h3,
+                    modifier = Modifier.padding(Dims.smPad)
+                )
+                // Name
+                Text(text = cartItem.item.itemName(), modifier = Modifier.padding(Dims.smPad))
 
-        when (cartItem.item) {
-            is Hamburger -> {
-                HamburgerSection(hamburger = cartItem.item, eventHandler = eventHandler)
+                QuantitySelector(
+                    titleString = "Quantity",
+                    currentQuantity = cartItem.quantity,
+                    onQuantityChanged = { quantity: Int -> eventHandler(NewEditEvent.QuantityEvent(quantity)) }
+                )
+
+                when (cartItem.item) {
+                    is Hamburger -> HamburgerSection(hamburger = cartItem.item, eventHandler = eventHandler)
+                    is FrenchFries -> FrySection(frenchFries = cartItem.item, eventHandler = eventHandler)
+                    is FloatDrink -> FloatSection(float = cartItem.item, eventHandler = eventHandler)
+                    is SoftDrink -> SoftDrinkSection(softDrink = cartItem.item, eventHandler = eventHandler)
+                    is Shake -> ShakeSection(shake = cartItem.item, eventHandler = eventHandler)
+                }
+                Spacer(modifier = Modifier.height(bottomBarHeight))
             }
-            is FrenchFries -> {
-                FrySection(frenchFries = cartItem.item, eventHandler = eventHandler)
-            }
-            is FloatDrink -> {
-                FloatSection(float = cartItem.item, eventHandler = eventHandler)
-            }
-            is SoftDrink -> {
-                SoftDrinkSection(softDrink = cartItem.item, eventHandler = eventHandler)
-            }
-            is Shake -> {
-                ShakeSection(shake = cartItem.item, eventHandler = eventHandler)
+        },
+        bottomBar = {
+            Row(modifier = Modifier.fillMaxWidth(1.0f).padding(Dims.smPad).height(bottomBarHeight)) {
+                Button(
+                    onClick = { eventHandler(NewEditEvent.CancelEvent) },
+                    modifier = Modifier.weight(1.0f).padding(Dims.smPad)) { Text(text = "Cancel") }
+                Button(
+                    onClick = { eventHandler(NewEditEvent.DoneEvent) },
+                    modifier = Modifier.weight(1.0f).padding(Dims.smPad)) { Text(text = "Done") }
             }
         }
-        Row(modifier = Modifier.fillMaxWidth().weight(1f, false)) {
-            Button(onClick = { eventHandler(NewEditEvent.DoneEvent) }) {
-                Text(text = "Done")
-            }
-            Button(onClick = { eventHandler(NewEditEvent.CancelEvent) }) {
-                Text(text = "Cancel")
-            }
-        }
-    }
+    )
+
 }
 
 @Composable
