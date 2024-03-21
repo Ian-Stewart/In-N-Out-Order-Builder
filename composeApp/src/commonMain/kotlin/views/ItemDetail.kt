@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import constants.Dims
 import menuitems.Buns
 import menuitems.Condiment
@@ -45,8 +48,27 @@ fun ItemDetail(
     isNewItem: Boolean,
     eventHandler: (NewEditEvent) -> Unit
 ) {
+    Dialog(
+        onDismissRequest = { eventHandler(NewEditEvent.CancelEvent) },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+            )
+    ) {
+        ItemDetailWithinDialog(cartItem, isNewItem, eventHandler)
+    }
+}
+
+@Composable
+private fun ItemDetailWithinDialog(
+    cartItem: CartItem,
+    isNewItem: Boolean,
+    eventHandler: (NewEditEvent) -> Unit
+) {
     val bottomBarHeight = 60.dp
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {},
         content = {
             val scrollState = rememberScrollState()
@@ -89,7 +111,6 @@ fun ItemDetail(
             }
         }
     )
-
 }
 
 @Composable
